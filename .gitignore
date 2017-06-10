@@ -1,0 +1,9 @@
+*.iml
+.gradle
+.idea
+build
+captures
+openCVLibrary320/build
+local.properties
+.DS_Store
+.externalNativeBuild
