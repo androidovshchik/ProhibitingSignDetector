@@ -6,7 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.WindowManager;
+
+import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
 public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -14,6 +18,20 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     private static final int REQUEST_CODE_CAMERA = 1;
 
     private CameraBridgeViewBase cameraBridgeViewBase;
+
+    private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                    System.loadLibrary("native-lib");
+                    cameraBridgeViewBase.enableView();
+                    break;
+                default:
+                    super.onManagerConnected(status);
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,18 +43,19 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
                 Manifest.permission.CAMERA
         }, REQUEST_CODE_CAMERA);
 
-        System.loadLibrary("native-lib");
-
         cameraBridgeViewBase = (CameraBridgeViewBase) findViewById(R.id.javaCameraView);
         cameraBridgeViewBase.setCvCameraViewListener(this);
         cameraBridgeViewBase.setMaxFrameSize(640, 480);
-        cameraBridgeViewBase.enableView();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        cameraBridgeViewBase.enableView();
+        if (!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseLoaderCallback);
+        } else {
+            baseLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
     }
 
     @Override
@@ -72,10 +91,14 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        Mat matGray = inputFrame.rgba();
-        mask(matGray.getNativeObjAddr());
-        return matGray;
+        Mat mat = inputFrame.rgba();
+        long matAddress = mat.getNativeObjAddr();
+        int[] circlesArray = search(matAddress);
+        selection(matAddress, circlesArray);
+        return mat;
     }
 
-    public native void mask(long matAddress);
+    public native int[] search(long matAddress);
+
+    public native void selection(long matAddress, int[] circlesArray);
 }

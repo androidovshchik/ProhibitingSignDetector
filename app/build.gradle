@@ -21,6 +21,14 @@ android {
             jniLibs.srcDirs = ['src/main/jniLibs']
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a', 'mips', 'armeabi'
+            universalApk false
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
