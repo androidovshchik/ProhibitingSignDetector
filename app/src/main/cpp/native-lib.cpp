@@ -22,58 +22,47 @@ extern "C"
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
     jclass /* activity */, jlong matAddress) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
+
     cv::medianBlur(original, original, 3);
-    // Convert input image to HSV
+
     cv::Mat hsv;
-    cv::cvtColor(original, hsv, CV_RGB2HSV);
+    cv::cvtColor(original, hsv, cv::COLOR_RGB2HSV);
 
     std::vector<cv::Mat> channels;
     cv::split(hsv, channels);
+    cv::Mat minHueThreshold = channels[0] < 12;
+    cv::Mat maxHueThreshold = channels[0] > 168;
+    cv::Mat saturationThreshold = channels[1] > 50;
+    *(cv::Mat*) matAddress = (minHueThreshold | maxHueThreshold) & saturationThreshold;
 
-    // opencv = hue values are divided by 2 to fit 8 bit range
-    float red1 = 25 / 2.0f;
-    // red has one part at the beginning and one part at the end of the range (I assume 0° to 25° and 335° to 360°)
-    float red2 = (360 - 25) / 2.0f;
+    //findContours(colorFiltered, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-    // compute both thresholds
-    cv::Mat thres1 = channels[0] < red1;
-    cv::Mat thres2 = channels[0] > red2;
+    /*std::vector<std::vector<cv::Point>> contours;
+    std::vector<cv::Vec4i> hierarchy;
+    findContours(colorFiltered, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
+    for (int i = 0; i < contours.size(); i++) {
+        std::vector<cv::Point> contour;
+        cv::approxPolyDP(contours[i], contour, 0.01 * cv::arcLength(contours[i], JNI_TRUE), JNI_TRUE);
+        if (contour.size() > 15) {
+            drawContours(*(cv::Mat *) matAddress, contours, i, GREEN, SIGN_THICKNESS);
+        }
+        /*std::vector<cv::Point> contoursOUT;
+        cv::approxPolyDP(contours[i], contoursOUT, 0.01 * cv::arcLength(contours[i], JNI_TRUE),
+                                  JNI_TRUE);
+        double area = cv::contourArea(contours[i]);
+        if ((contoursOUT.size() > 8) & (area > 30)) {
+            drawContours(*(cv::Mat *) matAddress, contours, i, GREEN, 2, 8, hierarchy, 0);
+        }
+    }*/
 
-    // choose some minimum saturation
-    cv::Mat saturationThres = channels[1] > 50;
-
-    // combine the results
-    original = (thres1 | thres2) & saturationThres;
-    cv::GaussianBlur(original, original, cv::Size(9, 9), 2, 2);
-    //*(cv::Mat*) matAddress = original;
-
-    /*cv::Ptr<cv::FeatureDetector> blobsDetector = cv::SimpleBlobDetector::create();
-    std::vector<cv::KeyPoint> keyPoints;
-    blobsDetector->detect(original, keyPoints);
-    */
-    //jsize length = (jsize) keyPoints.size() * 3;
     jsize length = 0;
     jint buffer[length];
-    for (int index = 0; index < length; index += 3) {
-        /*buffer[index] = static_cast<jint>(keyPoints[index].pt.x);
-        buffer[index + 1] = static_cast<jint>(keyPoints[index].pt.y);
-        buffer[index + 2] = 20;*/
-    }
     jintArray result = env->NewIntArray(length);
     if (result == NULL) {
         return NULL;
     }
     env->SetIntArrayRegion(result, 0, length, buffer);
     return result;
-    /*std::vector<cv::Vec3f> circles;
-    cv::HoughCircles(original, circles, CV_HOUGH_GRADIENT, 1, original.rows/8, 100, 20, 0, 0);
-    jsize length = (jsize) circles.size() * 3;
-    jint buffer[length];
-    for (size_t index = 0; index < length; index += 3) {
-        buffer[index] = static_cast<jint>(circles[index / 3][0]);
-        buffer[index + 1] = static_cast<jint>(circles[index / 3][1]);
-        buffer[index + 2] = static_cast<jint>(circles[index / 3][2]);
-    }*/
 }
 
 extern "C"
@@ -88,7 +77,7 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_select
     jint* elements = env->GetIntArrayElements(circlesArray, JNI_FALSE);
     for (int index = 0; index < length; index += 3) {
         cv::Point center(elements[index], elements[index + 1]);
-        cv::circle(*mat, center, elements[index + 2], cv::Scalar(0, 255, 0), 4);
+        cv::circle(*mat, center, elements[index + 2], GREEN, SIGN_THICKNESS);
     }
     env->ReleaseIntArrayElements(circlesArray, elements, 0);
 }
