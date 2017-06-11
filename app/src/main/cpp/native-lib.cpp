@@ -1,11 +1,21 @@
 #include <android/log.h>
 #include <jni.h>
 
+#include <iomanip>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d.hpp>
 
 #define TAG "JNI"
+#define GREEN cv::Scalar(0, 255, 0)
+#define SIGN_THICKNESS 4
+#define FONT_SCALE 0.8
+#define FONT_FACE cv::FONT_HERSHEY_SIMPLEX
+#define TEXT_START_X 25
+#define TEXT_THICKNESS 2
+#define TEXT_LINE_HEIGHT 40
+//__android_log_print(ANDROID_LOG_DEBUG, TAG, "FPS %d", fpsCount);
 
 extern "C"
 
@@ -44,7 +54,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     //jsize length = (jsize) keyPoints.size() * 3;
     jsize length = 0;
     jint buffer[length];
-    for (size_t index = 0; index < length; index += 3) {
+    for (int index = 0; index < length; index += 3) {
         /*buffer[index] = static_cast<jint>(keyPoints[index].pt.x);
         buffer[index + 1] = static_cast<jint>(keyPoints[index].pt.y);
         buffer[index + 2] = 20;*/
@@ -76,11 +86,37 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_select
         return;
     }
     jint* elements = env->GetIntArrayElements(circlesArray, JNI_FALSE);
-    for (size_t index = 0; index < length; index += 3) {
+    for (int index = 0; index < length; index += 3) {
         cv::Point center(elements[index], elements[index + 1]);
         cv::circle(*mat, center, elements[index + 2], cv::Scalar(0, 255, 0), 4);
     }
     env->ReleaseIntArrayElements(circlesArray, elements, 0);
-    cv::putText(*mat, "Hi all...", cv::Point(50,50), cv::FONT_HERSHEY_SIMPLEX, 1,
-                cv::Scalar(0,200,200), 5);
+}
+
+extern "C"
+
+JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_information(JNIEnv *env,
+    jclass /* activity */, jlong matAddress, jint fpsCount, jintArray circlesArray) {
+    cv::Mat* mat = (cv::Mat*) matAddress;
+    int textStartY = TEXT_LINE_HEIGHT;
+    std::ostringstream output;
+    output << std::setw(2) << std::setfill('0') << fpsCount << " FPS";
+    cv::putText(*mat, output.str(), cv::Point(TEXT_START_X, textStartY), FONT_FACE, FONT_SCALE,
+                GREEN, TEXT_THICKNESS);
+    output.seekp(0);
+    jsize length = env->GetArrayLength(circlesArray);
+    if (length % 3 != 0) {
+        return;
+    }
+    jint* elements = env->GetIntArrayElements(circlesArray, JNI_FALSE);
+    for (int index = 0; index < length; index += 3) {
+        textStartY += TEXT_LINE_HEIGHT;
+        output << '[' << std::setw(3) << std::setfill('0') << elements[index] << ", "
+               << std::setw(3) << std::setfill('0') << elements[index + 1] << ", "
+               << std::setw(3) << std::setfill('0') << elements[index + 2] << ']';
+        cv::putText(*mat, output.str(), cv::Point(TEXT_START_X, textStartY), FONT_FACE, FONT_SCALE,
+                    GREEN, TEXT_THICKNESS);
+        output.seekp(0);
+    }
+    env->ReleaseIntArrayElements(circlesArray, elements, 0);
 }
