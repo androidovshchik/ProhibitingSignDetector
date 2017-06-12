@@ -30,7 +30,8 @@
 extern "C"
 
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
-    jclass /* activity */, jlong matAddress, jint layerType) {
+    jclass /* activity */, jlong matAddress, jint layerType, jint lowerHue, jint upperHue,
+    jint saturation, jint blur) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
 
     cv::Mat hsv;
@@ -41,18 +42,18 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
 
     std::vector<cv::Mat> channels;
     cv::split(hsv, channels);
-    cv::Mat minHueThreshold = channels[0] < 12;
+    cv::Mat minHueThreshold = channels[0] < lowerHue;
     if (layerType == LAYER_HUE_LOWER) {
         *(cv::Mat*) matAddress = minHueThreshold;
     }
-    cv::Mat maxHueThreshold = channels[0] > 168;
+    cv::Mat maxHueThreshold = channels[0] > upperHue;
     if (layerType == LAYER_HUE_UPPER) {
         *(cv::Mat*) matAddress = maxHueThreshold;
     }
     if (layerType == LAYER_HUE) {
         *(cv::Mat*) matAddress = minHueThreshold | maxHueThreshold;
     }
-    cv::Mat saturationThreshold = channels[1] > 50;
+    cv::Mat saturationThreshold = channels[1] > saturation;
     if (layerType == LAYER_SATURATION) {
         *(cv::Mat*) matAddress = saturationThreshold;
     }
@@ -62,7 +63,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     }
 
     if (layerType == LAYER_BLUR) {
-        cv::medianBlur(colorFiltered, *(cv::Mat*) matAddress, 3);
+        cv::medianBlur(colorFiltered, *(cv::Mat*) matAddress, blur);
     }
 
     //findContours(colorFiltered, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);

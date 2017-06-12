@@ -36,6 +36,10 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     private int framesPerSecond = 0;
     private boolean rotateMat;
     private boolean showInfo;
+    private int lowerHue;
+    private int upperHue;
+    private int saturation;
+    private int blur;
     private int layerType = Constants.LAYER_DEFAULT;
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
@@ -175,6 +179,10 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         framesTempCount = 0;
         rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT);
         showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
+        lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
+        upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
+        saturation = prefs.getInteger(Prefs.SATURATION, 50);
+        blur = prefs.getInteger(Prefs.BLUR, 3);
         play.setTag(R.drawable.ic_pause_36dp);
         play.setImageResource(R.drawable.ic_pause_36dp);
     }
@@ -193,7 +201,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         if (rotateMat) {
             rotation(matAddress, 180);
         }
-        int[] circlesArray = search(matAddress, layerType);
+        int[] circlesArray = search(matAddress, layerType, lowerHue, upperHue, saturation, blur);
         selection(matAddress, circlesArray);
         if (showInfo) {
             information(matAddress, fpsCount, layerType, circlesArray);
@@ -212,7 +220,8 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         return framesPerSecond;
     }
 
-    public native int[] search(long matAddress, int layerType);
+    public native int[] search(long matAddress, int layerType, int lowerHue, int upperHue,
+                               int saturation, int blur);
 
     public native void selection(long matAddress, int[] circlesArray);
 
