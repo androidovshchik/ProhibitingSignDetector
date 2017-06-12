@@ -1,8 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.dksta.prohibitingsigndetector.ActivitySettings">
 
-</RelativeLayout>
+    <View
+        android:id="@+id/lowerThreshold"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        app:layout_widthPercent="50%"/>
+
+    <View
+        android:id="@+id/upperThreshold"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_toEndOf="@+id/lowerThreshold"
+        app:layout_widthPercent="50%"/>
+
+    <ImageView
+        android:id="@+id/lowerVueUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:src="@drawable/ic_arrow_drop_up_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <ImageView
+        android:id="@+id/upperVueUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_arrow_drop_up_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <ImageView
+        android:id="@+id/saturationUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_arrow_drop_up_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <TextView
+        android:id="@+id/lowerVue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:src="@drawable/ic_arrow_drop_up_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <TextView
+        android:id="@+id/upperVue"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_centerHorizontal="true"
+        app:layout_widthPercent="33%"/>
+
+    <TextView
+        android:id="@+id/saturation"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_alignParentEnd="true"
+        app:layout_widthPercent="33%"/>
+
+    <ImageView
+        android:id="@+id/lowerVueDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:src="@drawable/ic_arrow_drop_down_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <ImageView
+        android:id="@+id/upperVueDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_arrow_drop_down_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+    <ImageView
+        android:id="@+id/saturationDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/upperThreshold"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ic_arrow_drop_down_36dp"
+        android:contentDescription="@string/app_name"
+        app:layout_widthPercent="33%"/>
+
+</android.support.percent.PercentRelativeLayout>

@@ -5,7 +5,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -14,7 +16,8 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCameraViewListener2,
+    View.OnClickListener, View.OnLongClickListener {
 
     private static final int REQUEST_CODE_CAMERA = 1;
 
@@ -28,7 +31,6 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                     System.loadLibrary("native-lib");
-                    javaCameraView.enableView();
                     break;
                 default:
                     super.onManagerConnected(status);
@@ -41,6 +43,17 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
+
+        findViewById(R.id.settings).setOnClickListener(this);
+        findViewById(R.id.fps).setOnClickListener(this);
+
+        View play = findViewById(R.id.play);
+        play.setTag(R.drawable.ic_play_arrow_36dp);
+        play.setOnClickListener(this);
+
+        View layers = findViewById(R.id.layers);
+        layers.setOnClickListener(this);
+        layers.setOnLongClickListener(this);
 
         ActivityCompat.requestPermissions(this, new String[] {
                 Manifest.permission.CAMERA
@@ -65,6 +78,36 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     public void onPause() {
         super.onPause();
         javaCameraView.disableView();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.play:
+                if ((int) view.getTag() == R.drawable.ic_play_arrow_36dp) {
+                    view.setTag(R.drawable.ic_pause_36dp);
+                    ((ImageView) view).setImageResource(R.drawable.ic_pause_36dp);
+                    javaCameraView.enableView();
+                } else {
+                    view.setTag(R.drawable.ic_play_arrow_36dp);
+                    ((ImageView) view).setImageResource(R.drawable.ic_play_arrow_36dp);
+                    javaCameraView.disableView();
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.layers:
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     @Override
