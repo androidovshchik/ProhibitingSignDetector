@@ -16,6 +16,7 @@ public final class Prefs {
     public static final String APP_RESTRICTIONS = "App Restrictions";
 
     public static final String LAYER_TYPE = "layerType";
+    public static final String ROTATE_MAT = "rotateMat";
 
     /* SharedPreferences parameters */
 
@@ -35,6 +36,16 @@ public final class Prefs {
         return preferences.getInt(name, def);
     }
 
+    @SuppressWarnings("unused")
+    public boolean getBoolean(String name) {
+        return preferences.getBoolean(name, false);
+    }
+
+    @SuppressWarnings("unused")
+    public boolean getBoolean(String name, boolean def) {
+        return preferences.getBoolean(name, def);
+    }
+
     @SuppressWarnings("all")
     public String getString(String name) {
         return preferences.getString(name, "").trim();
@@ -48,6 +59,11 @@ public final class Prefs {
     @SuppressWarnings("unused")
     public void putInteger(String name, int value) {
         preferences.edit().putInt(name, value).apply();
+    }
+
+    @SuppressWarnings("unused")
+    public void putBoolean(String name, boolean value) {
+        preferences.edit().putBoolean(name, value).apply();
     }
 
     @SuppressWarnings("unused")

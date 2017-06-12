@@ -17,14 +17,23 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
+import ru.dksta.prohibitingsigndetector.utils.Prefs;
+
 public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCameraViewListener2,
     View.OnClickListener, View.OnLongClickListener {
 
     private static final int REQUEST_CODE_CAMERA = 1;
 
+    private Prefs prefs;
+
     private JavaCameraView javaCameraView;
 
-    private long lastFrameTime;
+    private ImageView play;
+
+    private long lastSecondTime;
+    private int framesTempCount;
+    private int framesPerSecond;
+    private boolean rotateMat;
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -48,13 +57,15 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         findViewById(R.id.settings).setOnClickListener(this);
         findViewById(R.id.fps).setOnClickListener(this);
 
-        View play = findViewById(R.id.play);
+        play = (ImageView) findViewById(R.id.play);
         play.setTag(R.drawable.ic_play_arrow_36dp);
         play.setOnClickListener(this);
 
         View layers = findViewById(R.id.layers);
         layers.setOnClickListener(this);
         layers.setOnLongClickListener(this);
+
+        prefs = new Prefs(getApplicationContext());
 
         ActivityCompat.requestPermissions(this, new String[] {
                 Manifest.permission.CAMERA
@@ -76,12 +87,6 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        javaCameraView.disableView();
-    }
-
-    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.settings:
@@ -89,12 +94,8 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
                 break;
             case R.id.play:
                 if ((int) view.getTag() == R.drawable.ic_play_arrow_36dp) {
-                    view.setTag(R.drawable.ic_pause_36dp);
-                    ((ImageView) view).setImageResource(R.drawable.ic_pause_36dp);
                     javaCameraView.enableView();
                 } else {
-                    view.setTag(R.drawable.ic_play_arrow_36dp);
-                    ((ImageView) view).setImageResource(R.drawable.ic_play_arrow_36dp);
                     javaCameraView.disableView();
                 }
                 break;
@@ -115,6 +116,12 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        javaCameraView.disableView();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         javaCameraView.disableView();
@@ -131,26 +138,43 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
 
     @Override
     public void onCameraViewStarted(int width, int height) {
-        lastFrameTime = System.currentTimeMillis();
+        lastSecondTime = System.currentTimeMillis();
+        framesTempCount = 0;
+        framesPerSecond = 0;
+        rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT);
+        play.setTag(R.drawable.ic_play_arrow_36dp);
+        play.setImageResource(R.drawable.ic_play_arrow_36dp);
     }
 
     @Override
     public void onCameraViewStopped() {
-
+        play.setTag(R.drawable.ic_play_arrow_36dp);
+        play.setImageResource(R.drawable.ic_play_arrow_36dp);
     }
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        long currentFrameTime = System.currentTimeMillis();
-        int fpsCount = (int) (1000 / (currentFrameTime - lastFrameTime));
-        lastFrameTime = currentFrameTime;
+        int fpsCount = countFPS();
         Mat mat = inputFrame.rgba();
         long matAddress = mat.getNativeObjAddr();
-        rotation(matAddress, 90);
+        if (rotateMat) {
+            rotation(matAddress, 180);
+        }
         int[] circlesArray = search(matAddress);
         selection(matAddress, circlesArray);
         information(matAddress, fpsCount, circlesArray);
         return mat;
+    }
+
+    private int countFPS() {
+        long currentFrameTime = System.currentTimeMillis();
+        if (currentFrameTime - lastSecondTime >= 1000) {
+            lastSecondTime = currentFrameTime;
+            framesPerSecond = framesTempCount;
+            framesTempCount = 0;
+        }
+        framesTempCount++;
+        return framesPerSecond;
     }
 
     public native int[] search(long matAddress);
