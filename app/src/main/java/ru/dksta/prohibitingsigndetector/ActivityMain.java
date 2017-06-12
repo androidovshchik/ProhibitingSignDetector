@@ -146,6 +146,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         lastFrameTime = currentFrameTime;
         Mat mat = inputFrame.rgba();
         long matAddress = mat.getNativeObjAddr();
+        rotation(matAddress, 90);
         int[] circlesArray = search(matAddress);
         selection(matAddress, circlesArray);
         information(matAddress, fpsCount, circlesArray);
@@ -157,4 +158,6 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     public native void selection(long matAddress, int[] circlesArray);
 
     public native void information(long matAddress, int fpsCount, int[] circlesArray);
+
+    public native void rotation(long matAddress, int angle);
 }
