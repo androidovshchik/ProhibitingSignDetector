@@ -10,26 +10,76 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
+        <TextView
+            android:id="@+id/minThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="128dp"
+            android:layout_below="@+id/lowerThreshold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="0 VUE"
+            app:layout_widthPercent="50%"/>
+
+        <TextView
             android:id="@+id/lowerThreshold"
             android:layout_width="wrap_content"
-            android:layout_height="256dp"
-            android:background="@android:color/holo_red_light"
+            android:layout_height="128dp"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="LOWER VUE"
+            app:layout_widthPercent="50%"/>
+
+        <TextView
+            android:id="@+id/upperThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="128dp"
+            android:layout_toEndOf="@+id/lowerThreshold"
+            android:layout_below="@+id/maxThreshold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="UPPER VUE"
+            app:layout_widthPercent="50%"/>
+
+        <TextView
+            android:id="@+id/maxThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="128dp"
+            android:layout_toEndOf="@+id/lowerThreshold"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="179 VUE"
             app:layout_widthPercent="50%"/>
 
         <View
-            android:id="@+id/upperThreshold"
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/minThreshold"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="#b5b5b5"/>
+
+        <CheckBox
+            android:id="@+id/allowChanges"
             android:layout_width="wrap_content"
-            android:layout_height="256dp"
-            android:layout_toEndOf="@+id/lowerThreshold"
-            android:background="@android:color/holo_red_dark"
-            app:layout_widthPercent="50%"/>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider1"
+            android:text="Изменять значения" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/allowChanges"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="#b5b5b5"/>
 
         <ImageView
             android:id="@+id/lowerVueUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/lowerThreshold"
+            android:layout_below="@+id/divider2"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
@@ -38,7 +88,7 @@
             android:id="@+id/upperVueUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/lowerThreshold"
+            android:layout_below="@+id/divider2"
             android:layout_toEndOf="@+id/lowerVueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
@@ -48,7 +98,7 @@
             android:id="@+id/saturationUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/upperThreshold"
+            android:layout_below="@+id/divider2"
             android:layout_toEndOf="@+id/upperVueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
@@ -58,7 +108,7 @@
             android:id="@+id/blurUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/upperThreshold"
+            android:layout_below="@+id/divider2"
             android:layout_toEndOf="@+id/saturationUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
@@ -69,8 +119,9 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/lowerVueUp"
-            android:src="@drawable/ic_arrow_drop_up_36dp"
-            android:contentDescription="@string/app_name"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="@string/button_lower_vue"
             app:layout_widthPercent="25%"/>
 
         <TextView
@@ -79,6 +130,9 @@
             android:layout_height="48dp"
             android:layout_below="@+id/upperVueUp"
             android:layout_toEndOf="@+id/lowerVue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="@string/button_upper_vue"
             app:layout_widthPercent="25%"/>
 
         <TextView
@@ -87,6 +141,9 @@
             android:layout_height="48dp"
             android:layout_below="@+id/saturationUp"
             android:layout_toEndOf="@+id/upperVue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="@string/button_saturation"
             app:layout_widthPercent="25%"/>
 
         <TextView
@@ -95,6 +152,9 @@
             android:layout_height="48dp"
             android:layout_below="@+id/blurUp"
             android:layout_toEndOf="@+id/saturation"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="@string/button_blur"
             app:layout_widthPercent="25%"/>
 
         <ImageView
@@ -137,7 +197,7 @@
             app:layout_widthPercent="25%"/>
 
         <View
-            android:id="@+id/divider1"
+            android:id="@+id/divider3"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/saturationDown"
@@ -149,11 +209,11 @@
             android:id="@+id/rotation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/divider1"
-            android:text="Отражать по вертикали" />
+            android:layout_below="@+id/divider3"
+            android:text="Отражать фрейм по вертикали" />
 
         <View
-            android:id="@+id/divider2"
+            android:id="@+id/divider4"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/rotation"
@@ -165,11 +225,11 @@
             android:id="@+id/showInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/divider2"
+            android:layout_below="@+id/divider4"
             android:text="Показывать информацию" />
 
         <View
-            android:id="@+id/divider3"
+            android:id="@+id/divider5"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/showInfo"
