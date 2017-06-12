@@ -18,6 +18,7 @@
 //__android_log_print(ANDROID_LOG_DEBUG, TAG, "FPS %d", fpsCount);
 
 // syncing with java constants
+#define LAYER_DEFAULT 1
 #define LAYER_HSV 2
 #define LAYER_HUE_LOWER 3
 #define LAYER_HUE_UPPER 4
@@ -83,6 +84,10 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
             drawContours(*(cv::Mat *) matAddress, contours, i, GREEN, 2, 8, hierarchy, 0);
         }
     }*/
+
+    if (layerType != LAYER_DEFAULT && layerType != LAYER_HSV) {
+        cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
+    }
 
     jsize length = 0;
     jint buffer[length];
