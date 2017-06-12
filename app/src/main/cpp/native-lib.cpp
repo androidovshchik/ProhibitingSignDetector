@@ -17,23 +17,52 @@
 #define TEXT_LINE_HEIGHT 40
 //__android_log_print(ANDROID_LOG_DEBUG, TAG, "FPS %d", fpsCount);
 
+// syncing with java constants
+#define LAYER_HSV 2
+#define LAYER_HUE_LOWER 3
+#define LAYER_HUE_UPPER 4
+#define LAYER_HUE 5
+#define LAYER_SATURATION 6
+#define LAYER_COLOR_FILTERED 7
+#define LAYER_BLUR 8
+
 extern "C"
 
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
-    jclass /* activity */, jlong matAddress) {
+    jclass /* activity */, jlong matAddress, jint layerType) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
-
-    cv::medianBlur(original, original, 3);
 
     cv::Mat hsv;
     cv::cvtColor(original, hsv, cv::COLOR_RGB2HSV);
+    if (layerType == LAYER_HSV) {
+        *(cv::Mat*) matAddress = hsv;
+    }
 
     std::vector<cv::Mat> channels;
     cv::split(hsv, channels);
     cv::Mat minHueThreshold = channels[0] < 12;
+    if (layerType == LAYER_HUE_LOWER) {
+        *(cv::Mat*) matAddress = minHueThreshold;
+    }
     cv::Mat maxHueThreshold = channels[0] > 168;
+    if (layerType == LAYER_HUE_UPPER) {
+        *(cv::Mat*) matAddress = maxHueThreshold;
+    }
+    if (layerType == LAYER_HUE) {
+        *(cv::Mat*) matAddress = minHueThreshold | maxHueThreshold;
+    }
     cv::Mat saturationThreshold = channels[1] > 50;
-    //*(cv::Mat*) matAddress = (minHueThreshold | maxHueThreshold) & saturationThreshold;
+    if (layerType == LAYER_SATURATION) {
+        *(cv::Mat*) matAddress = saturationThreshold;
+    }
+    cv::Mat colorFiltered = (minHueThreshold | maxHueThreshold) & saturationThreshold;
+    if (layerType == LAYER_COLOR_FILTERED) {
+        *(cv::Mat*) matAddress = colorFiltered;
+    }
+
+    if (layerType == LAYER_BLUR) {
+        cv::medianBlur(colorFiltered, *(cv::Mat*) matAddress, 3);
+    }
 
     //findContours(colorFiltered, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 

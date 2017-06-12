@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -34,6 +35,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     private int framesTempCount;
     private int framesPerSecond;
     private boolean rotateMat;
+    private int layerType = Constants.LAYER_DEFAULT;
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -62,6 +64,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         play.setOnClickListener(this);
 
         View layers = findViewById(R.id.layers);
+        layers.setTag(Constants.LAYER_DEFAULT);
         layers.setOnClickListener(this);
         layers.setOnLongClickListener(this);
 
@@ -99,6 +102,35 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
                     javaCameraView.disableView();
                 }
                 break;
+            case R.id.layers:
+                switch ((int) view.getTag()) {
+                    case Constants.LAYER_HSV:
+                        setLayerImage(view, R.drawable.ic_filter_2_36dp, Constants.LAYER_HUE_LOWER);
+                        break;
+                    case Constants.LAYER_HUE_LOWER:
+                        setLayerImage(view, R.drawable.ic_filter_3_36dp, Constants.LAYER_HUE_UPPER);
+                        break;
+                    case Constants.LAYER_HUE_UPPER:
+                        setLayerImage(view, R.drawable.ic_filter_4_36dp, Constants.LAYER_HUE);
+                        break;
+                    case Constants.LAYER_HUE:
+                        setLayerImage(view, R.drawable.ic_filter_5_36dp, Constants.LAYER_SATURATION);
+                        break;
+                    case Constants.LAYER_SATURATION:
+                        setLayerImage(view, R.drawable.ic_filter_6_36dp,
+                                Constants.LAYER_COLOR_FILTERED);
+                        break;
+                    case Constants.LAYER_COLOR_FILTERED:
+                        setLayerImage(view, R.drawable.ic_filter_7_36dp, Constants.LAYER_BLUR);
+                        break;
+                    case Constants.LAYER_BLUR:
+                        setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_DEFAULT);
+                        break;
+                    case Constants.LAYER_DEFAULT:
+                        setLayerImage(view, R.drawable.ic_filter_1_36dp, Constants.LAYER_HSV);
+                        break;
+                }
+                break;
             default:
                 break;
         }
@@ -108,11 +140,18 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     public boolean onLongClick(View view) {
         switch (view.getId()) {
             case R.id.layers:
+                setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_DEFAULT);
                 break;
             default:
                 break;
         }
         return true;
+    }
+
+    private void setLayerImage(View view, @DrawableRes int id, int layerType) {
+        this.layerType = layerType;
+        view.setTag(layerType);
+        ((ImageView) view).setImageResource(id);
     }
 
     @Override
@@ -160,7 +199,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         if (rotateMat) {
             rotation(matAddress, 180);
         }
-        int[] circlesArray = search(matAddress);
+        int[] circlesArray = search(matAddress, layerType);
         selection(matAddress, circlesArray);
         information(matAddress, fpsCount, circlesArray);
         return mat;
@@ -177,7 +216,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         return framesPerSecond;
     }
 
-    public native int[] search(long matAddress);
+    public native int[] search(long matAddress, int layerType);
 
     public native void selection(long matAddress, int[] circlesArray);
 
