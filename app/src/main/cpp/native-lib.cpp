@@ -109,3 +109,59 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_inform
     }
     env->ReleaseIntArrayElements(circlesArray, elements, 0);
 }
+
+/*
+ *@brief rotate image by multiple of 90 degrees
+ *
+ *@param source : input image
+ *@param dst : output image
+ *@param angle : factor of 90, even it is not factor of 90, the angle
+ * will be mapped to the range of [-360, 360].
+ * {angle = 90n; n = {-4, -3, -2, -1, 0, 1, 2, 3, 4} }
+ * if angle bigger than 360 or smaller than -360, the angle will
+ * be map to -360 ~ 360.
+ * mapping rule is : angle = ((angle / 90) % 4) * 90;
+ *
+ * ex : 89 will map to 0, 98 to 90, 179 to 90, 270 to 3, 360 to 0.
+ *
+ */
+void rotate_image_90n(cv::Mat &src, cv::Mat &dst, int angle)
+{
+    if(src.data != dst.data){
+        src.copyTo(dst);
+    }
+
+    angle = ((angle / 90) % 4) * 90;
+
+    //0 : flip vertical; 1 flip horizontal
+    bool const flip_horizontal_or_vertical = angle > 0 ? 1 : 0;
+    int const number = std::abs(angle / 90);
+
+    for(int i = 0; i != number; ++i){
+        cv::transpose(dst, dst);
+        cv::flip(dst, dst, flip_horizontal_or_vertical);
+    }
+}
+
+extern "C"
+
+JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_rotate(JNIEnv *env,
+    jclass /* activity */, jlong matAddress, jint angle) {
+    CV_Assert(angle % 90 == 0 && angle <= 360 && angle >= -360);
+    if(angle == 270 || angle == -90){
+        // Rotate clockwise 270 degrees
+        cv::transpose(src, dst);
+        cv::flip(dst, dst, 0);
+    } else if(angle == 180 || angle == -180){
+        // Rotate clockwise 180 degrees
+        cv::flip(src, dst, -1);
+    } else if(angle == 90 || angle == -270){
+        // Rotate clockwise 90 degrees
+        cv::transpose(src, dst);
+        cv::flip(dst, dst, 1);
+    } else if(angle == 360 || angle == 0 || angle == -360){
+        if(src.data != dst.data){
+            src.copyTo(dst);
+        }
+    }
+}

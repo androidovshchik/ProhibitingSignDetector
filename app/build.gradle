@@ -46,4 +46,5 @@ dependencies {
     compile project(':openCVLibrary320')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:percent:25.3.1'
+    compile 'com.jakewharton.timber:timber:4.5.1'
 }
