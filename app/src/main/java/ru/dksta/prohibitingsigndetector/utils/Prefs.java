@@ -15,7 +15,7 @@ public final class Prefs {
     /* Preferences */
     public static final String APP_RESTRICTIONS = "App Restrictions";
 
-    public static final String LAYER_TYPE = "layerType";
+    public static final String SHOW_INFO = "showInfo";
     public static final String ROTATE_MAT = "rotateMat";
 
     /* SharedPreferences parameters */

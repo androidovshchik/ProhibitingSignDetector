@@ -133,6 +133,22 @@
             android:layout_marginBottom="4dp"
             android:background="#b5b5b5"/>
 
+        <CheckBox
+            android:id="@+id/showInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider2"
+            android:text="Показывать информацию" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/showInfo"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="#b5b5b5"/>
+
     </android.support.percent.PercentRelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>

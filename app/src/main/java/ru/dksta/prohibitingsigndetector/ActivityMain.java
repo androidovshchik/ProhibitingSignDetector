@@ -35,6 +35,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     private int framesTempCount;
     private int framesPerSecond;
     private boolean rotateMat;
+    private boolean showInfo;
     private int layerType = Constants.LAYER_DEFAULT;
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
@@ -57,7 +58,6 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         setContentView(R.layout.activity_main);
 
         findViewById(R.id.settings).setOnClickListener(this);
-        findViewById(R.id.fps).setOnClickListener(this);
 
         play = (ImageView) findViewById(R.id.play);
         play.setTag(R.drawable.ic_play_arrow_36dp);
@@ -181,6 +181,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         framesTempCount = 0;
         framesPerSecond = 0;
         rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT);
+        showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
         play.setTag(R.drawable.ic_play_arrow_36dp);
         play.setImageResource(R.drawable.ic_play_arrow_36dp);
     }
@@ -201,7 +202,9 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         }
         int[] circlesArray = search(matAddress, layerType);
         selection(matAddress, circlesArray);
-        information(matAddress, fpsCount, layerType, circlesArray);
+        if (showInfo) {
+            information(matAddress, fpsCount, layerType, circlesArray);
+        }
         return mat;
     }
 

@@ -35,20 +35,10 @@
         app:layout_heightPercent="25%"/>
 
     <ImageView
-        android:id="@+id/fps"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/layers"
-        android:contentDescription="@string/app_name"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_info_36dp"
-        app:layout_heightPercent="25%"/>
-
-    <ImageView
         android:id="@+id/layers"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/play"
         android:contentDescription="@string/app_name"
         android:scaleType="centerInside"
         android:src="@drawable/ic_filter_36dp"
