@@ -2,6 +2,7 @@ package ru.dksta.prohibitingsigndetector;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -83,6 +84,9 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
+            case R.id.settings:
+                startActivity(new Intent(getApplicationContext(), ActivitySettings.class));
+                break;
             case R.id.play:
                 if ((int) view.getTag() == R.drawable.ic_play_arrow_36dp) {
                     view.setTag(R.drawable.ic_pause_36dp);
