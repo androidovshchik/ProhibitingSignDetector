@@ -161,12 +161,6 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        javaCameraView.disableView();
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {

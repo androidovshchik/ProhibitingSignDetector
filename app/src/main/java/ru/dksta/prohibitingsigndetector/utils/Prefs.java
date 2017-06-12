@@ -17,8 +17,8 @@ public final class Prefs {
 
     public static final String SHOW_INFO = "showInfo";
     public static final String ROTATE_MAT = "rotateMat";
-    public static final String LOWER_VUE = "lowerVue";
-    public static final String UPPER_VUE = "upperVue";
+    public static final String LOWER_HUE = "lowerHue";
+    public static final String UPPER_HUE = "upperHue";
     public static final String SATURATION = "saturation";
     public static final String BLUR = "blur";
 

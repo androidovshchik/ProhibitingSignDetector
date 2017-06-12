@@ -17,7 +17,7 @@
             android:layout_below="@+id/lowerThreshold"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="0 VUE"
+            android:text="0 HUE"
             app:layout_widthPercent="50%"/>
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_height="128dp"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="LOWER VUE"
+            android:text="LOWER HUE"
             app:layout_widthPercent="50%"/>
 
         <TextView
@@ -37,7 +37,7 @@
             android:layout_below="@+id/maxThreshold"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="UPPER VUE"
+            android:text="UPPER HUE"
             app:layout_widthPercent="50%"/>
 
         <TextView
@@ -47,7 +47,7 @@
             android:layout_toEndOf="@+id/lowerThreshold"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="179 VUE"
+            android:text="179 HUE"
             app:layout_widthPercent="50%"/>
 
         <View
@@ -76,7 +76,7 @@
             android:background="#b5b5b5"/>
 
         <ImageView
-            android:id="@+id/lowerVueUp"
+            android:id="@+id/lowerHueUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/divider2"
@@ -85,11 +85,11 @@
             app:layout_widthPercent="25%"/>
 
         <ImageView
-            android:id="@+id/upperVueUp"
+            android:id="@+id/upperHueUp"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/divider2"
-            android:layout_toEndOf="@+id/lowerVueUp"
+            android:layout_toEndOf="@+id/lowerHueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
@@ -99,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/divider2"
-            android:layout_toEndOf="@+id/upperVueUp"
+            android:layout_toEndOf="@+id/upperHueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
@@ -115,24 +115,24 @@
             app:layout_widthPercent="25%"/>
 
         <TextView
-            android:id="@+id/lowerVue"
+            android:id="@+id/lowerHue"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/lowerVueUp"
+            android:layout_below="@+id/lowerHueUp"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="@string/button_lower_vue"
+            android:text="@string/button_lower_hue"
             app:layout_widthPercent="25%"/>
 
         <TextView
-            android:id="@+id/upperVue"
+            android:id="@+id/upperHue"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/upperVueUp"
-            android:layout_toEndOf="@+id/lowerVue"
+            android:layout_below="@+id/upperHueUp"
+            android:layout_toEndOf="@+id/lowerHue"
             android:textSize="20sp"
             android:gravity="center"
-            android:text="@string/button_upper_vue"
+            android:text="@string/button_upper_hue"
             app:layout_widthPercent="25%"/>
 
         <TextView
@@ -140,7 +140,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/saturationUp"
-            android:layout_toEndOf="@+id/upperVue"
+            android:layout_toEndOf="@+id/upperHue"
             android:textSize="20sp"
             android:gravity="center"
             android:text="@string/button_saturation"
@@ -158,20 +158,20 @@
             app:layout_widthPercent="25%"/>
 
         <ImageView
-            android:id="@+id/lowerVueDown"
+            android:id="@+id/lowerHueDown"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/lowerVue"
+            android:layout_below="@+id/lowerHue"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
 
         <ImageView
-            android:id="@+id/upperVueDown"
+            android:id="@+id/upperHueDown"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
-            android:layout_below="@+id/upperVue"
-            android:layout_toEndOf="@+id/lowerVueDown"
+            android:layout_below="@+id/upperHue"
+            android:layout_toEndOf="@+id/lowerHueDown"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
@@ -181,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:layout_below="@+id/saturation"
-            android:layout_toEndOf="@+id/upperVueDown"
+            android:layout_toEndOf="@+id/upperHueDown"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="25%"/>
