@@ -13,14 +13,14 @@
         <View
             android:id="@+id/lowerThreshold"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="256dp"
             android:background="@android:color/holo_red_light"
             app:layout_widthPercent="50%"/>
 
         <View
             android:id="@+id/upperThreshold"
             android:layout_width="wrap_content"
-            android:layout_height="200dp"
+            android:layout_height="256dp"
             android:layout_toEndOf="@+id/lowerThreshold"
             android:background="@android:color/holo_red_dark"
             app:layout_widthPercent="50%"/>
@@ -28,85 +28,113 @@
         <ImageView
             android:id="@+id/lowerVueUp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/upperThreshold"
+            android:layout_height="48dp"
+            android:layout_below="@+id/lowerThreshold"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
 
         <ImageView
             android:id="@+id/upperVueUp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/upperThreshold"
-            android:layout_centerHorizontal="true"
+            android:layout_height="48dp"
+            android:layout_below="@+id/lowerThreshold"
+            android:layout_toEndOf="@+id/lowerVueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
 
         <ImageView
             android:id="@+id/saturationUp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/upperThreshold"
-            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/upperVueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
+
+        <ImageView
+            android:id="@+id/blurUp"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/upperThreshold"
+            android:layout_toEndOf="@+id/saturationUp"
+            android:src="@drawable/ic_arrow_drop_up_36dp"
+            android:contentDescription="@string/app_name"
+            app:layout_widthPercent="25%"/>
 
         <TextView
             android:id="@+id/lowerVue"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/lowerVueUp"
             android:src="@drawable/ic_arrow_drop_up_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
 
         <TextView
             android:id="@+id/upperVue"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/upperVueUp"
-            android:layout_centerHorizontal="true"
-            app:layout_widthPercent="33%"/>
+            android:layout_toEndOf="@+id/lowerVue"
+            app:layout_widthPercent="25%"/>
 
         <TextView
             android:id="@+id/saturation"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/saturationUp"
-            android:layout_alignParentEnd="true"
-            app:layout_widthPercent="33%"/>
+            android:layout_toEndOf="@+id/upperVue"
+            app:layout_widthPercent="25%"/>
+
+        <TextView
+            android:id="@+id/blur"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/blurUp"
+            android:layout_toEndOf="@+id/saturation"
+            app:layout_widthPercent="25%"/>
 
         <ImageView
             android:id="@+id/lowerVueDown"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/lowerVue"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
 
         <ImageView
             android:id="@+id/upperVueDown"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/upperVue"
-            android:layout_centerHorizontal="true"
+            android:layout_toEndOf="@+id/lowerVueDown"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
 
         <ImageView
             android:id="@+id/saturationDown"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_below="@+id/saturation"
-            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/upperVueDown"
             android:src="@drawable/ic_arrow_drop_down_36dp"
             android:contentDescription="@string/app_name"
-            app:layout_widthPercent="33%"/>
+            app:layout_widthPercent="25%"/>
+
+        <ImageView
+            android:id="@+id/blurDown"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/blur"
+            android:layout_toEndOf="@+id/saturationDown"
+            android:src="@drawable/ic_arrow_drop_down_36dp"
+            android:contentDescription="@string/app_name"
+            app:layout_widthPercent="25%"/>
 
         <View
             android:id="@+id/divider1"

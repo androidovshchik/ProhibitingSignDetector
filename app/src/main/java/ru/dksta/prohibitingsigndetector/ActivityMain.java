@@ -33,7 +33,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
 
     private long lastSecondTime;
     private int framesTempCount;
-    private int framesPerSecond;
+    private int framesPerSecond = 0;
     private boolean rotateMat;
     private boolean showInfo;
     private int layerType = Constants.LAYER_DEFAULT;
@@ -179,11 +179,10 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
     public void onCameraViewStarted(int width, int height) {
         lastSecondTime = System.currentTimeMillis();
         framesTempCount = 0;
-        framesPerSecond = 0;
         rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT);
         showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
-        play.setTag(R.drawable.ic_play_arrow_36dp);
-        play.setImageResource(R.drawable.ic_play_arrow_36dp);
+        play.setTag(R.drawable.ic_pause_36dp);
+        play.setImageResource(R.drawable.ic_pause_36dp);
     }
 
     @Override

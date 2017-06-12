@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ProhibitingSignDetector</string>
+
+    <string name="button_lower_vue">LV: </string>
+    <string name="button_upper_vue">UV: </string>
+    <string name="button_saturation">S: </string>
+    <string name="button_blur">B: </string>
 </resources>

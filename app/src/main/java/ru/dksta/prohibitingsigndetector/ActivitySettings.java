@@ -22,7 +22,7 @@ public class ActivitySettings extends Activity implements View.OnClickListener,
         rotation.setChecked(prefs.getBoolean(Prefs.ROTATE_MAT));
         rotation.setOnCheckedChangeListener(this);
         CheckBox showInfo = (CheckBox) findViewById(R.id.showInfo);
-        showInfo.setChecked(prefs.getBoolean(Prefs.SHOW_INFO));
+        showInfo.setChecked(prefs.getBoolean(Prefs.SHOW_INFO, true));
         showInfo.setOnCheckedChangeListener(this);
     }
 
