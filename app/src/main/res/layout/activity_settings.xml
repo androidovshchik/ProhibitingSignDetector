@@ -108,6 +108,31 @@
             android:contentDescription="@string/app_name"
             app:layout_widthPercent="33%"/>
 
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/saturationDown"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="#b5b5b5"/>
+
+        <CheckBox
+            android:id="@+id/rotation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider1"
+            android:text="Отражать по вертикали" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/rotation"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="#b5b5b5"/>
+
     </android.support.percent.PercentRelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
