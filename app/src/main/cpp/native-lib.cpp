@@ -111,10 +111,31 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_select
     env->ReleaseIntArrayElements(circlesArray, elements, 0);
 }
 
+std::string getLayerTypeDesc(jint layerType) {
+    switch (layerType) {
+        case LAYER_HSV:
+            return "LAYER TYPE HSV";
+        case LAYER_HUE_LOWER:
+            return "LAYER TYPE LOWER HUE";
+        case LAYER_HUE_UPPER:
+            return "LAYER TYPE UPPER HUE";
+        case LAYER_HUE:
+            return "LAYER TYPE HUE";
+        case LAYER_SATURATION:
+            return "LAYER TYPE SATURATION";
+        case LAYER_COLOR_FILTERED:
+            return "LAYER TYPE RED FILTERED";
+        case LAYER_BLUR:
+            return "LAYER TYPE BLURED";
+        default:
+            return "LAYER TYPE RGBA";
+    }
+}
+
 extern "C"
 
 JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_information(JNIEnv *env,
-    jclass /* activity */, jlong matAddress, jint fpsCount, jintArray circlesArray) {
+    jclass /* activity */, jlong matAddress, jint fpsCount, jint layerType, jintArray circlesArray) {
     cv::Mat* mat = (cv::Mat*) matAddress;
     int textStartY = TEXT_LINE_HEIGHT;
     std::ostringstream output;
@@ -122,6 +143,9 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_inform
     cv::putText(*mat, output.str(), cv::Point(TEXT_START_X, textStartY), FONT_FACE, FONT_SCALE,
                 GREEN, TEXT_THICKNESS);
     output.seekp(0);
+    textStartY += TEXT_LINE_HEIGHT;
+    cv::putText(*mat, getLayerTypeDesc(layerType), cv::Point(TEXT_START_X, textStartY), FONT_FACE,
+                FONT_SCALE, GREEN, TEXT_THICKNESS);
     jsize length = env->GetArrayLength(circlesArray);
     if (length % 3 != 0) {
         return;

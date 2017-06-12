@@ -201,7 +201,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
         }
         int[] circlesArray = search(matAddress, layerType);
         selection(matAddress, circlesArray);
-        information(matAddress, fpsCount, circlesArray);
+        information(matAddress, fpsCount, layerType, circlesArray);
         return mat;
     }
 
@@ -220,7 +220,7 @@ public class ActivityMain extends Activity implements CameraBridgeViewBase.CvCam
 
     public native void selection(long matAddress, int[] circlesArray);
 
-    public native void information(long matAddress, int fpsCount, int[] circlesArray);
+    public native void information(long matAddress, int fpsCount, int layerType, int[] circlesArray);
 
     public native void rotation(long matAddress, int angle);
 }
