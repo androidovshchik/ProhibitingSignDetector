@@ -9,6 +9,7 @@ public interface Constants {
     int LAYER_HUE_UPPER = 4;
     int LAYER_HUE = 5;
     int LAYER_SATURATION = 6;
-    int LAYER_COLOR_FILTERED = 7;
-    int LAYER_BLUR = 8;
+    int LAYER_VALUE = 7;
+    int LAYER_RED_FILTERED = 8;
+    int LAYER_BLUR = 9;
 }

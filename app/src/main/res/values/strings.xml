@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">ProhibitingSignDetector</string>
 
-    <string name="button_lower_hue">LH: %1$d</string>
-    <string name="button_upper_hue">UH: %1$d</string>
-    <string name="button_saturation">S: %1$d</string>
-    <string name="button_blur">B: %1$d</string>
+    <string name="text_lower_hue">LH: %1$d</string>
+    <string name="text_upper_hue">UH: %1$d</string>
+    <string name="text_min_saturation">MS: %1$d</string>
+    <string name="text_min_value">MV: %1$d</string>
+    <string name="text_blur">B: %1$d</string>
 </resources>

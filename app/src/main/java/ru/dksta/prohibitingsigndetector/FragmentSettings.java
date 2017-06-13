@@ -4,16 +4,18 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.shchurov.horizontalwheelview.HorizontalWheelView;
 
 import ru.dksta.prohibitingsigndetector.utils.Prefs;
 
-public class FragmentSettings extends Fragment {
+public class FragmentSettings extends Fragment implements View.OnClickListener {
 
     private static final double PI2 = Math.PI * 2;
 
@@ -62,7 +64,8 @@ public class FragmentSettings extends Fragment {
         maxColors[1] = Color.HSVToColor(new float[] { 358f, 1f, 1f });
         lowerGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, minColors);
         upperGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, maxColors);
-        setThresholds();
+        setLowerThreshold();
+        setUpperThreshold();
 
         lowerHue = (TextView) root.findViewById(R.id.lowerHue);
         HorizontalWheelView lowerHueWheel = (HorizontalWheelView)
@@ -74,7 +77,7 @@ public class FragmentSettings extends Fragment {
             public void onRotationChanged(double radians) {
                 getActivityMain().lowerHue = (int) Math.round(radians / PI2 * 179);
                 setTextValues();
-                setThresholds();
+                setLowerThreshold();
             }
         });
 
@@ -88,7 +91,7 @@ public class FragmentSettings extends Fragment {
             public void onRotationChanged(double radians) {
                 getActivityMain().upperHue = (int) Math.round(radians / PI2 * 179);
                 setTextValues();
-                setThresholds();
+                setUpperThreshold();
             }
         });
 
@@ -102,7 +105,8 @@ public class FragmentSettings extends Fragment {
             public void onRotationChanged(double radians) {
                 getActivityMain().minSaturation = (int) Math.round(radians / PI2 * 255);
                 setTextValues();
-                setThresholds();
+                setLowerThreshold();
+                setUpperThreshold();
             }
         });
 
@@ -116,7 +120,8 @@ public class FragmentSettings extends Fragment {
             public void onRotationChanged(double radians) {
                 getActivityMain().minValue = (int) Math.round(radians / PI2 * 255);
                 setTextValues();
-                setThresholds();
+                setLowerThreshold();
+                setUpperThreshold();
             }
         });
 
@@ -135,7 +140,71 @@ public class FragmentSettings extends Fragment {
 
         setTextValues();
 
+        View layers = root.findViewById(R.id.layers);
+        layers.setTag(Constants.LAYER_DEFAULT);
+        layers.setOnClickListener(this);
+        root.findViewById(R.id.save).setOnClickListener(this);
+
         return root;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.play:
+                /*if ((int) view.getTag() == R.drawable.ic_play_arrow_36dp) {
+                    javaCameraView.enableView();
+                } else {
+                    javaCameraView.disableView();
+                }*/
+                break;
+            case R.id.layers:
+                switch ((int) view.getTag()) {
+                    case Constants.LAYER_HSV:
+                        setLayerImage(view, R.drawable.ic_filter_2_36dp, Constants.LAYER_HUE_LOWER);
+                        break;
+                    case Constants.LAYER_HUE_LOWER:
+                        setLayerImage(view, R.drawable.ic_filter_3_36dp, Constants.LAYER_HUE_UPPER);
+                        break;
+                    case Constants.LAYER_HUE_UPPER:
+                        setLayerImage(view, R.drawable.ic_filter_4_36dp, Constants.LAYER_HUE);
+                        break;
+                    case Constants.LAYER_HUE:
+                        setLayerImage(view, R.drawable.ic_filter_5_36dp, Constants.LAYER_SATURATION);
+                        break;
+                    case Constants.LAYER_SATURATION:
+                        setLayerImage(view, R.drawable.ic_filter_6_36dp, Constants.LAYER_VALUE);
+                        break;
+                    case Constants.LAYER_VALUE:
+                        setLayerImage(view, R.drawable.ic_filter_7_36dp, Constants.LAYER_RED_FILTERED);
+                        break;
+                    case Constants.LAYER_RED_FILTERED:
+                        setLayerImage(view, R.drawable.ic_filter_8_36dp, Constants.LAYER_BLUR);
+                        break;
+                    case Constants.LAYER_BLUR:
+                        setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_DEFAULT);
+                        break;
+                    case Constants.LAYER_DEFAULT:
+                        setLayerImage(view, R.drawable.ic_filter_1_36dp, Constants.LAYER_HSV);
+                        break;
+                }
+                break;
+            case R.id.save:
+                prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
+                prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
+                prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
+                prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
+                prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void setLayerImage(View view, @DrawableRes int id, int layerType) {
+        getActivityMain().layerType = layerType;
+        view.setTag(layerType);
+        ((ImageView) view).setImageResource(id);
     }
 
     private void setTextValues() {
@@ -151,31 +220,26 @@ public class FragmentSettings extends Fragment {
                 getActivityMain().blur));
     }
 
-    private void setThresholds() {
+    private void setLowerThreshold() {
         float minSaturation = 1f * getActivityMain().minSaturation / 255;
         float minValue = 1f * getActivityMain().minValue / 255;
         lowerHSV[0] = getActivityMain().lowerHue * 2;
         lowerHSV[1] = minSaturation;
         lowerHSV[2] = minValue;
+        minColors[1] = Color.HSVToColor(lowerHSV);
+        lowerGradient.setColors(minColors);
+        lowerThreshold.setBackground(lowerGradient);
+    }
+
+    private void setUpperThreshold() {
+        float minSaturation = 1f * getActivityMain().minSaturation / 255;
+        float minValue = 1f * getActivityMain().minValue / 255;
         upperHSV[0] = getActivityMain().upperHue * 2;
         upperHSV[1] = minSaturation;
         upperHSV[2] = minValue;
-        minColors[1] = Color.HSVToColor(lowerHSV);
         maxColors[0] = Color.HSVToColor(upperHSV);
-        lowerGradient.setColors(minColors);
         upperGradient.setColors(maxColors);
-        lowerThreshold.setBackground(lowerGradient);
         upperThreshold.setBackground(upperGradient);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
-        prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
-        prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
-        prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
-        prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
     }
 
     private double getAngle(int value, int range) {

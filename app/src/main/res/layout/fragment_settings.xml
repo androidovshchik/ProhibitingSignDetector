@@ -138,6 +138,14 @@
             app:activeColor="#202020"
             app:normalColor="#b5b5b5"/>
 
+        <ImageView
+            android:id="@+id/save"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_save_white_36dp"/>
+
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>
