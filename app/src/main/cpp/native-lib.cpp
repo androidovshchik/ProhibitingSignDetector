@@ -34,6 +34,8 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     jint saturation, jint blur) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
 
+    cv::medianBlur(original, original, 3);
+
     cv::Mat hsv;
     cv::cvtColor(original, hsv, cv::COLOR_RGB2HSV);
     if (layerType == LAYER_HSV) {
@@ -66,28 +68,33 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         cv::medianBlur(colorFiltered, *(cv::Mat*) matAddress, blur);
     }
 
-    //findContours(colorFiltered, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-
-    /*std::vector<std::vector<cv::Point>> contours;
-    std::vector<cv::Vec4i> hierarchy;
-    findContours(colorFiltered, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
-    for (int i = 0; i < contours.size(); i++) {
-        std::vector<cv::Point> contour;
-        cv::approxPolyDP(contours[i], contour, 0.01 * cv::arcLength(contours[i], JNI_TRUE), JNI_TRUE);
-        if (contour.size() > 15) {
-            drawContours(*(cv::Mat *) matAddress, contours, i, GREEN, SIGN_THICKNESS);
-        }
-        /*std::vector<cv::Point> contoursOUT;
-        cv::approxPolyDP(contours[i], contoursOUT, 0.01 * cv::arcLength(contours[i], JNI_TRUE),
-                                  JNI_TRUE);
-        double area = cv::contourArea(contours[i]);
-        if ((contoursOUT.size() > 8) & (area > 30)) {
-            drawContours(*(cv::Mat *) matAddress, contours, i, GREEN, 2, 8, hierarchy, 0);
-        }
-    }*/
-
     if (layerType != LAYER_DEFAULT && layerType != LAYER_HSV) {
         cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
+    }
+
+    cv::SimpleBlobDetector::Params params;
+// Change thresholds
+    params.minThreshold = 10;
+    params.maxThreshold = 200;
+// Filter by Area.
+    params.filterByArea = true;
+    params.minArea = 1500;
+// Filter by Circularity
+    params.filterByCircularity = true;
+    params.minCircularity = 0.1;
+// Filter by Convexity
+    params.filterByConvexity = true;
+    params.minConvexity = 0.87;
+// Filter by Inertia
+    params.filterByInertia = true;
+    params.minInertiaRatio = 0.01;
+    std::vector<cv::KeyPoint> keypoints;
+    cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
+    detector->detect(colorFiltered, keypoints);
+    for (int i=0; i<keypoints.size(); i++){
+        float X = keypoints[i].pt.x;
+        float Y = keypoints[i].pt.y;
+        cv::circle(*(cv::Mat*) matAddress, cv::Point(X,Y), keypoints[i].size, GREEN, 4);
     }
 
     jsize length = 0;
