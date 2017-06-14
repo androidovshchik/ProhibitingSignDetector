@@ -27,7 +27,6 @@ public class ActivityMain extends Activity {
 
     public int minArea;
     public float minCircularity;
-    public float minConvexity;
     public float minInertiaRatio;
 
     private FragmentSettings settings;

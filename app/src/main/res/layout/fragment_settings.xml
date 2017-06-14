@@ -138,6 +138,66 @@
             app:activeColor="#202020"
             app:normalColor="#b5b5b5"/>
 
+        <TextView
+            android:id="@+id/minArea"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/text_min_area"/>
+
+        <com.github.shchurov.horizontalwheelview.HorizontalWheelView
+            android:id="@+id/minAreaWheel"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:onlyPositiveValues="true"
+            app:marksCount="480"
+            app:activeColor="#202020"
+            app:normalColor="#b5b5b5"/>
+
+        <TextView
+            android:id="@+id/minCircularity"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/text_min_circularity"/>
+
+        <com.github.shchurov.horizontalwheelview.HorizontalWheelView
+            android:id="@+id/minCircularityWheel"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:onlyPositiveValues="true"
+            app:marksCount="100"
+            app:activeColor="#202020"
+            app:normalColor="#b5b5b5"/>
+
+        <TextView
+            android:id="@+id/minInertiaRatio"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="@string/text_min_inertia_ratio"/>
+
+        <com.github.shchurov.horizontalwheelview.HorizontalWheelView
+            android:id="@+id/minInertiaRatioWheel"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:onlyPositiveValues="true"
+            app:marksCount="100"
+            app:activeColor="#202020"
+            app:normalColor="#b5b5b5"/>
+
         <ImageView
             android:id="@+id/rotate"
             android:layout_width="match_parent"

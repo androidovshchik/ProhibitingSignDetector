@@ -6,4 +6,8 @@
     <string name="text_min_saturation">MS: %1$d</string>
     <string name="text_min_value">MV: %1$d</string>
     <string name="text_blur">B: %1$d</string>
+
+    <string name="text_min_area">MA: %1$d</string>
+    <string name="text_min_circularity">MCI: %1$d</string>
+    <string name="text_min_inertia_ratio">MIR: %1$d</string>
 </resources>

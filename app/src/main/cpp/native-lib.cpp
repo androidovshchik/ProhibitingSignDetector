@@ -74,18 +74,12 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     }
 
     cv::SimpleBlobDetector::Params params;
-// Change thresholds
-    params.minThreshold = 10;
-    params.maxThreshold = 200;
 // Filter by Area.
     params.filterByArea = true;
     params.minArea = 1500;
 // Filter by Circularity
     params.filterByCircularity = true;
     params.minCircularity = 0.1;
-// Filter by Convexity
-    params.filterByConvexity = true;
-    params.minConvexity = 0.87;
 // Filter by Inertia
     params.filterByInertia = true;
     params.minInertiaRatio = 0.01;

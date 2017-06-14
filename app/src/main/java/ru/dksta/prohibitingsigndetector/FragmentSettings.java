@@ -41,12 +41,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private TextView minSaturation;
     private TextView minValue;
     private TextView blur;
+    private TextView minArea;
+    private TextView minCircularity;
+    private TextView minInertiaRatio;
 
     private HorizontalWheelView lowerHueWheel;
     private HorizontalWheelView upperHueWheel;
     private HorizontalWheelView minSaturationWheel;
     private HorizontalWheelView minValueWheel;
     private HorizontalWheelView blurWheel;
+    private HorizontalWheelView minAreaWheel;
+    private HorizontalWheelView minCircularityWheel;
+    private HorizontalWheelView minInertiaRatioWheel;
 
     private ImageView play;
     private ImageView rotate;
@@ -140,6 +146,46 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
             @Override
             public void onRotationChanged(double radians) {
                 getActivityMain().blur = (int) Math.round(radians / PI2 * 9) * 2 + 3;
+                setTextValues();
+                onChanges();
+            }
+        });
+
+        minArea = (TextView) root.findViewById(R.id.minArea);
+        minAreaWheel = (HorizontalWheelView) root.findViewById(R.id.minAreaWheel);
+        minAreaWheel.setEndLock(true);
+        minAreaWheel.setListener(new HorizontalWheelView.Listener() {
+            @Override
+            public void onRotationChanged(double radians) {
+                getActivityMain().minArea = (int) Math.round(radians / PI2 * 480);
+                setTextValues();
+                onChanges();
+            }
+        });
+
+        minCircularity = (TextView) root.findViewById(R.id.minCircularity);
+        minCircularityWheel = (HorizontalWheelView) root.findViewById(R.id.minCircularityWheel);
+        minCircularityWheel.setEndLock(true);
+        minCircularityWheel.setListener(new HorizontalWheelView.Listener() {
+            @Override
+            public void onRotationChanged(double radians) {
+                radians = radians / PI2 * 100;
+                radians = Math.round(radians);
+                getActivityMain().minCircularity = (float) radians / 100;
+                setTextValues();
+                onChanges();
+            }
+        });
+
+        minInertiaRatio = (TextView) root.findViewById(R.id.minInertiaRatio);
+        minInertiaRatioWheel = (HorizontalWheelView) root.findViewById(R.id.minInertiaRatioWheel);
+        minInertiaRatioWheel.setEndLock(true);
+        minInertiaRatioWheel.setListener(new HorizontalWheelView.Listener() {
+            @Override
+            public void onRotationChanged(double radians) {
+                radians = radians / PI2 * 100;
+                radians = Math.round(radians);
+                getActivityMain().minInertiaRatio = (float) radians / 100;
                 setTextValues();
                 onChanges();
             }
@@ -281,6 +327,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                 getActivityMain().minValue));
         blur.setText(getString(R.string.text_blur,
                 getActivityMain().blur));
+        minArea.setText(getString(R.string.text_min_area,
+                getActivityMain().minArea));
+        minCircularity.setText(getString(R.string.text_min_circularity,
+                getActivityMain().minCircularity));
+        minInertiaRatio.setText(getString(R.string.text_min_inertia_ratio,
+                getActivityMain().minInertiaRatio));
     }
 
     private void setupWheels() {
@@ -289,6 +341,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         minSaturationWheel.setRadiansAngle(getAngle(getActivityMain().minSaturation, 255));
         minValueWheel.setRadiansAngle(getAngle(getActivityMain().minValue, 255));
         blurWheel.setRadiansAngle(getAngle((getActivityMain().blur - 3) / 2, 9));
+        minAreaWheel.setRadiansAngle(getAngle(getActivityMain().minArea, 480));
+        minCircularityWheel.setRadiansAngle(getActivityMain().minCircularity * PI2);
+        minInertiaRatioWheel.setRadiansAngle(getActivityMain().minInertiaRatio * PI2);
     }
 
     private void setLowerThreshold() {

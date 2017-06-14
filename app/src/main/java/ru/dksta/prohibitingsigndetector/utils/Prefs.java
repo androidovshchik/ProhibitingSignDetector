@@ -13,6 +13,7 @@ import java.util.Map;
 public final class Prefs {
 
     /* Preferences */
+
     public static final String APP_RESTRICTIONS = "App Restrictions";
 
     public static final String SHOW_INFO = "showInfo";
@@ -22,8 +23,9 @@ public final class Prefs {
     public static final String MIN_SATURATION = "minSaturation";
     public static final String MIN_VALUE = "minValue";
     public static final String BLUR = "blur";
-
-    /* SharedPreferences parameters */
+    public static final String MIN_AREA = "minArea";
+    public static final String MIN_CIRCULARITY = "minCircularity";
+    public static final String MIN_INERTIA_RATIO = "minInertiaRatio";
 
     private SharedPreferences preferences;
 
@@ -39,6 +41,11 @@ public final class Prefs {
     @SuppressWarnings("unused")
     public int getInteger(String name, int def) {
         return preferences.getInt(name, def);
+    }
+
+    @SuppressWarnings("unused")
+    public float getFloat(String name, float def) {
+        return preferences.getFloat(name, def);
     }
 
     @SuppressWarnings("unused")
@@ -64,6 +71,11 @@ public final class Prefs {
     @SuppressWarnings("unused")
     public void putInteger(String name, int value) {
         preferences.edit().putInt(name, value).apply();
+    }
+
+    @SuppressWarnings("unused")
+    public void putFloat(String name, float value) {
+        preferences.edit().putFloat(name, value).apply();
     }
 
     @SuppressWarnings("unused")
