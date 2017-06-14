@@ -70,10 +70,6 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         *(cv::Mat*) matAddress = colorFiltered;
     }
 
-    if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
-        cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
-    }
-
     cv::SimpleBlobDetector::Params params;
     params.filterByArea = true;
     params.minArea = minArea;
@@ -85,7 +81,14 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     std::vector<cv::KeyPoint> keyPoints;
     detector->detect(colorFiltered, keyPoints);
 
+    if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
+        cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
+    }
+
     jsize length = (jsize) keyPoints.size() * 3;
+    if (length == 0) {
+        return NULL;
+    }
     jint buffer[length];
     for (int index = 0; index < length; index += 3) {
         buffer[index] = (int) keyPoints[index / 3].pt.x;
@@ -154,6 +157,9 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_inform
     textStartY += TEXT_LINE_HEIGHT;
     cv::putText(*mat, getLayerTypeDesc(layerType), cv::Point(TEXT_START_X, textStartY), FONT_FACE,
                 FONT_SCALE, GREEN, TEXT_THICKNESS);
+    if (circlesArray == NULL) {
+        return;
+    }
     jsize length = env->GetArrayLength(circlesArray);
     if (length % 3 != 0) {
         return;

@@ -60,7 +60,9 @@ public class FragmentCamera extends Fragment implements CameraBridgeViewBase.CvC
                 getActivityMain().minSaturation, getActivityMain().minValue,
                 getActivityMain().blur, getActivityMain().minArea, getActivityMain().minCircularity,
                 getActivityMain().minInertiaRatio);
-        getActivityMain().selection(matAddress, circlesArray);
+        if (circlesArray != null) {
+            getActivityMain().selection(matAddress, circlesArray);
+        }
         if (getActivityMain().showInfo) {
             getActivityMain().information(matAddress, fpsCount,
                     getActivityMain().layerType, circlesArray);
