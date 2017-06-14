@@ -11,9 +11,13 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 
+import ru.dksta.prohibitingsigndetector.utils.PermissionsUtil;
+
 public class ActivityMain extends Activity {
 
     private static final int REQUEST_CODE_CAMERA = 1;
+
+    public boolean allowWork = false;
 
     public int layerType = Constants.LAYER_RGBA;
     public boolean rotateMat;
@@ -32,18 +36,7 @@ public class ActivityMain extends Activity {
     private FragmentSettings settings;
     private FragmentCamera camera;
 
-    private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                    System.loadLibrary("native-lib");
-                    break;
-                default:
-                    super.onManagerConnected(status);
-            }
-        }
-    };
+    private BaseLoaderCallback baseLoaderCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,16 +45,32 @@ public class ActivityMain extends Activity {
         setContentView(R.layout.activity_main);
         settings = (FragmentSettings) getFragmentManager().findFragmentById(R.id.settingFragment);
         camera = (FragmentCamera) getFragmentManager().findFragmentById(R.id.cameraFragment);
-        ActivityCompat.requestPermissions(this, new String[] {
-                Manifest.permission.CAMERA
-        }, REQUEST_CODE_CAMERA);
+        baseLoaderCallback = new BaseLoaderCallback(getApplicationContext()) {
+            @Override
+            public void onManagerConnected(int status) {
+                super.onManagerConnected(status);
+                switch (status) {
+                    case LoaderCallbackInterface.SUCCESS:
+                        System.loadLibrary("native-lib");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        allowWork = PermissionsUtil.hasAllPermissions(getApplicationContext());
+        if (!allowWork) {
+            ActivityCompat.requestPermissions(this, PermissionsUtil.ALL_PERMISSIONS,
+                    REQUEST_CODE_CAMERA);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, baseLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, getApplicationContext(),
+                    baseLoaderCallback);
         } else {
             baseLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
@@ -74,8 +83,14 @@ public class ActivityMain extends Activity {
         settings.onPlayEvent(false);
     }
 
-    public void onPlayEvent(boolean play) {
-        camera.onPlayEvent(play);
+    public boolean triggerPlayEvent(boolean play) {
+        if (allowWork) {
+            camera.onPlayEvent(play);
+        } else {
+            ActivityCompat.requestPermissions(this, PermissionsUtil.ALL_PERMISSIONS,
+                    REQUEST_CODE_CAMERA);
+        }
+        return allowWork;
     }
 
     @Override
@@ -83,6 +98,7 @@ public class ActivityMain extends Activity {
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CODE_CAMERA:
+                allowWork = PermissionsUtil.hasAllPermissions(getApplicationContext());
                 break;
         }
     }

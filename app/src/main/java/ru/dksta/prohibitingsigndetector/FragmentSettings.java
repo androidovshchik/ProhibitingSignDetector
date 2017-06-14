@@ -225,10 +225,11 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.play:
-                play.setTag(!((boolean) view.getTag()));
-                play.setImageResource((boolean) view.getTag() ? R.drawable.ic_pause_black_36dp :
-                        R.drawable.ic_play_arrow_36dp);
-                getActivityMain().onPlayEvent((boolean) view.getTag());
+                if (getActivityMain().triggerPlayEvent(!((boolean) view.getTag()))) {
+                    play.setTag(!((boolean) view.getTag()));
+                    play.setImageResource((boolean) view.getTag() ? R.drawable.ic_pause_black_36dp :
+                            R.drawable.ic_play_arrow_36dp);
+                }
                 break;
             case R.id.layers:
                 switch ((int) view.getTag()) {
@@ -258,6 +259,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                         break;
                     case Constants.LAYER_RGBA:
                         setLayerImage(view, R.drawable.ic_filter_1_36dp, Constants.LAYER_HSV);
+                        break;
+                    default:
                         break;
                 }
                 break;
