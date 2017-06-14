@@ -19,7 +19,8 @@ public final class Prefs {
     public static final String ROTATE_MAT = "rotateMat";
     public static final String LOWER_HUE = "lowerHue";
     public static final String UPPER_HUE = "upperHue";
-    public static final String SATURATION = "saturation";
+    public static final String MIN_SATURATION = "minSaturation";
+    public static final String MIN_VALUE = "minValue";
     public static final String BLUR = "blur";
 
     /* SharedPreferences parameters */

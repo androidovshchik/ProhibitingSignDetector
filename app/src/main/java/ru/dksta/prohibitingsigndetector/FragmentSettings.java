@@ -48,6 +48,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private HorizontalWheelView minValueWheel;
     private HorizontalWheelView blurWheel;
 
+    private ImageView rotate;
     private ImageView showInfo;
     private ImageView save;
 
@@ -146,9 +147,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         setTextValues();
         setupWheels();
 
+        View play = root.findViewById(R.id.play);
+        play.setTag(false);
+        play.setOnClickListener(this);
         View layers = root.findViewById(R.id.layers);
         layers.setTag(Constants.LAYER_RGBA);
         layers.setOnClickListener(this);
+        rotate = (ImageView) root.findViewById(R.id.rotate);
+        rotate.setOnClickListener(this);
         showInfo = (ImageView) root.findViewById(R.id.showInfo);
         showInfo.setOnClickListener(this);
         save = (ImageView) root.findViewById(R.id.save);
@@ -166,11 +172,10 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.play:
-                /*if ((int) view.getTag() == R.drawable.ic_play_arrow_36dp) {
-                    javaCameraView.enableView();
-                } else {
-                    javaCameraView.disableView();
-                }*/
+                view.setTag(!((boolean) view.getTag()));
+                ((ImageView) view).setImageResource((boolean) view.getTag() ?
+                        R.drawable.ic_pause_black_36dp : R.drawable.ic_play_arrow_36dp);
+                getActivityMain().onPlayEvent((boolean) view.getTag());
                 break;
             case R.id.layers:
                 switch ((int) view.getTag()) {
@@ -203,6 +208,11 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                         break;
                 }
                 break;
+            case R.id.rotate:
+                onChanges();
+                getActivityMain().rotateMat = !getActivityMain().rotateMat;
+                setupButtons();
+                break;
             case R.id.showInfo:
                 onChanges();
                 getActivityMain().showInfo = !getActivityMain().showInfo;
@@ -217,6 +227,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                     prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
                     prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
                     prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
+                    prefs.putBoolean(Prefs.ROTATE_MAT, getActivityMain().rotateMat);
                     prefs.putBoolean(Prefs.SHOW_INFO, getActivityMain().showInfo);
                 }
                 break;
@@ -296,6 +307,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     }
 
     private void setupButtons() {
+        rotate.setTag(getActivityMain().rotateMat);
+        rotate.setColorFilter(getActivityMain().rotateMat ? DARK : LIGHT,
+                PorterDuff.Mode.MULTIPLY);
         showInfo.setTag(getActivityMain().showInfo);
         showInfo.setColorFilter(getActivityMain().showInfo ? DARK : LIGHT,
                 PorterDuff.Mode.MULTIPLY);
@@ -307,6 +321,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
         getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
         getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
+        getActivityMain().rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT, false);
         getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
     }
 

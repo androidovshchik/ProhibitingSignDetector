@@ -1,9 +1,15 @@
-<org.opencv.android.JavaCameraView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:opencv="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/javaCameraView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:adjustViewBounds="true"
-    opencv:camera_id="back"
-    tools:context="ru.dksta.prohibitingsigndetector.FragmentCamera"/>
+    tools:context="ru.dksta.prohibitingsigndetector.FragmentCamera">
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/javaCameraView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        opencv:camera_id="back"/>
+
+</FrameLayout>

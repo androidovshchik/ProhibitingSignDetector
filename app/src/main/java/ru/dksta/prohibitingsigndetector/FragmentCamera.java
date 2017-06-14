@@ -14,6 +14,10 @@ public class FragmentCamera extends Fragment implements CameraBridgeViewBase.CvC
 
     private JavaCameraView javaCameraView;
 
+    private long lastSecondTime;
+    private int framesTempCount;
+    private int framesPerSecond = 0;
+
     public FragmentCamera() {}
 
     @Override
@@ -26,19 +30,54 @@ public class FragmentCamera extends Fragment implements CameraBridgeViewBase.CvC
         return root;
     }
 
+    public void onPlayEvent(boolean play) {
+        if (play) {
+            javaCameraView.enableView();
+        } else {
+            javaCameraView.disableView();
+        }
+    }
+
     @Override
     public void onCameraViewStarted(int width, int height) {
-
+        lastSecondTime = System.currentTimeMillis();
+        framesTempCount = 0;
     }
 
     @Override
-    public void onCameraViewStopped() {
-
-    }
+    public void onCameraViewStopped() {}
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        int fpsCount = countFPS();
         Mat mat = inputFrame.rgba();
+        long matAddress = mat.getNativeObjAddr();
+        if (getActivityMain().rotateMat) {
+            getActivityMain().rotation(matAddress, 180);
+        }
+        int[] circlesArray = getActivityMain().search(matAddress, getActivityMain().layerType,
+                getActivityMain().lowerHue, getActivityMain().upperHue,
+                getActivityMain().minSaturation, getActivityMain().blur);
+        getActivityMain().selection(matAddress, circlesArray);
+        if (getActivityMain().showInfo) {
+            getActivityMain().information(matAddress, fpsCount,
+                    getActivityMain().layerType, circlesArray);
+        }
         return mat;
+    }
+
+    private int countFPS() {
+        long currentFrameTime = System.currentTimeMillis();
+        if (currentFrameTime - lastSecondTime >= 1000) {
+            lastSecondTime = currentFrameTime;
+            framesPerSecond = framesTempCount;
+            framesTempCount = 0;
+        }
+        framesTempCount++;
+        return framesPerSecond;
+    }
+
+    private ActivityMain getActivityMain() {
+        return (ActivityMain) getActivity();
     }
 }

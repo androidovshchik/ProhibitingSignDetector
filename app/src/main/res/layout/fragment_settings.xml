@@ -139,6 +139,22 @@
             app:normalColor="#b5b5b5"/>
 
         <ImageView
+            android:id="@+id/rotate"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_rotate_left_white_36dp"/>
+
+        <ImageView
+            android:id="@+id/showInfo"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_info_outline_white_36dp"/>
+
+        <ImageView
             android:id="@+id/save"
             android:layout_width="match_parent"
             android:layout_height="96dp"
