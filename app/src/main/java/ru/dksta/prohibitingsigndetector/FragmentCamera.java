@@ -57,7 +57,7 @@ public class FragmentCamera extends Fragment implements CameraBridgeViewBase.CvC
         }
         int[] circlesArray = getActivityMain().search(matAddress, getActivityMain().layerType,
                 getActivityMain().lowerHue, getActivityMain().upperHue,
-                getActivityMain().minSaturation, getActivityMain().blur);
+                getActivityMain().minSaturation, getActivityMain().minValue, getActivityMain().blur);
         getActivityMain().selection(matAddress, circlesArray);
         if (getActivityMain().showInfo) {
             getActivityMain().information(matAddress, fpsCount,
