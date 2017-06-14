@@ -42,9 +42,16 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
 dependencies {
     compile project(':openCVLibrary320')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:percent:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.jakewharton.timber:timber:4.5.1'
+    compile 'com.github.shchurov:horizontalwheelview:0.9.5'
 }

@@ -48,6 +48,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private HorizontalWheelView minValueWheel;
     private HorizontalWheelView blurWheel;
 
+    private ImageView showInfo;
     private ImageView save;
 
     public FragmentSettings() {}
@@ -148,11 +149,15 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         View layers = root.findViewById(R.id.layers);
         layers.setTag(Constants.LAYER_RGBA);
         layers.setOnClickListener(this);
+        showInfo = (ImageView) root.findViewById(R.id.showInfo);
+        showInfo.setOnClickListener(this);
         save = (ImageView) root.findViewById(R.id.save);
         save.setTag(false);
         save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
         save.setOnClickListener(this);
         save.setOnLongClickListener(this);
+
+        setupButtons();
 
         return root;
     }
@@ -198,6 +203,11 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                         break;
                 }
                 break;
+            case R.id.showInfo:
+                onChanges();
+                getActivityMain().showInfo = !getActivityMain().showInfo;
+                setupButtons();
+                break;
             case R.id.save:
                 if (((boolean) save.getTag())) {
                     save.setTag(false);
@@ -207,6 +217,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                     prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
                     prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
                     prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
+                    prefs.putBoolean(Prefs.SHOW_INFO, getActivityMain().showInfo);
                 }
                 break;
             default:
@@ -224,6 +235,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                     setLowerThreshold();
                     setUpperThreshold();
                     setupWheels();
+                    setupButtons();
                     save.setTag(false);
                     save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
                 }
@@ -283,12 +295,19 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         upperThreshold.setBackground(upperGradient);
     }
 
+    private void setupButtons() {
+        showInfo.setTag(getActivityMain().showInfo);
+        showInfo.setColorFilter(getActivityMain().showInfo ? DARK : LIGHT,
+                PorterDuff.Mode.MULTIPLY);
+    }
+
     private void restoreVars() {
         getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
         getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
         getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
         getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
         getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
+        getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
     }
 
     private void onChanges() {
