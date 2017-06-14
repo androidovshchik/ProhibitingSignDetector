@@ -1,6 +1,5 @@
 package ru.dksta.prohibitingsigndetector;
 
-import android.Manifest;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
