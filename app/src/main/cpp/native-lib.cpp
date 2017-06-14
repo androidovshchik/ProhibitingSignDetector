@@ -29,7 +29,8 @@ extern "C"
 
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
     jclass /* activity */, jlong matAddress, jint layerType, jint lowerHue, jint upperHue,
-    jint minSaturation, jint minValue, jint blur) {
+    jint minSaturation, jint minValue, jint blur, jint minArea, jfloat minCircularity,
+    jfloat minInertiaRatio) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
 
     cv::Mat hsv;
@@ -66,7 +67,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
 
     cv::medianBlur(colorFiltered, colorFiltered, blur);
     if (layerType == LAYER_BLUR) {
-        cv::medianBlur(colorFiltered, *(cv::Mat*) matAddress, blur);
+        *(cv::Mat*) matAddress = colorFiltered;
     }
 
     if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
@@ -74,15 +75,12 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     }
 
     cv::SimpleBlobDetector::Params params;
-// Filter by Area.
     params.filterByArea = true;
-    params.minArea = 1500;
-// Filter by Circularity
+    params.minArea = minArea;
     params.filterByCircularity = true;
-    params.minCircularity = 0.1;
-// Filter by Inertia
+    params.minCircularity = minCircularity;
     params.filterByInertia = true;
-    params.minInertiaRatio = 0.01;
+    params.minInertiaRatio = minInertiaRatio;
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keyPoints;
     detector->detect(colorFiltered, keyPoints);

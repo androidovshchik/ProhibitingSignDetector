@@ -88,7 +88,8 @@ public class ActivityMain extends Activity {
     }
 
     public native int[] search(long matAddress, int layerType, int lowerHue, int upperHue,
-                               int minSaturation, int minValue, int blur);
+                               int minSaturation, int minValue, int blur, int minArea,
+                               float minCircularity, float minInertiaRatio);
 
     public native void selection(long matAddress, int[] circlesArray);
 

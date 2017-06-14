@@ -8,6 +8,6 @@
     <string name="text_blur">B: %1$d</string>
 
     <string name="text_min_area">MA: %1$d</string>
-    <string name="text_min_circularity">MCI: %1$d</string>
-    <string name="text_min_inertia_ratio">MIR: %1$d</string>
+    <string name="text_min_circularity">MC: %1$.2f</string>
+    <string name="text_min_inertia_ratio">MIR: %1$.2f</string>
 </resources>

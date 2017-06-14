@@ -378,13 +378,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     }
 
     private void restoreVars() {
+        getActivityMain().rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT, false);
+        getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
         getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
         getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
         getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
         getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
         getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
-        getActivityMain().rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT, false);
-        getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
+        getActivityMain().minArea = prefs.getInteger(Prefs.MIN_AREA, 100);
+        getActivityMain().minCircularity = prefs.getFloat(Prefs.MIN_CIRCULARITY, 0.1f);
+        getActivityMain().minInertiaRatio = prefs.getFloat(Prefs.MIN_INERTIA_RATIO, 0.01f);
     }
 
     private void onChanges() {
