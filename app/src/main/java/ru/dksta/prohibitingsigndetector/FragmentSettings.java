@@ -3,7 +3,6 @@ package ru.dksta.prohibitingsigndetector;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         View.OnLongClickListener {
 
     private static final double PI2 = Math.PI * 2;
-    private static final int BACKGROUND = Color.parseColor("#f5f5f5");
     private static final int LIGHT = Color.parseColor("#b5b5b5");
     private static final int DARK = Color.parseColor("#202020");
 
@@ -29,12 +27,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private View lowerThreshold;
     private View upperThreshold;
 
-    private int[] minColors;
     private float[] lowerHSV;
     private float[] upperHSV;
-    private int[] maxColors;
-    private GradientDrawable lowerGradient;
-    private GradientDrawable upperGradient;
 
     private TextView lowerHue;
     private TextView upperHue;
@@ -72,16 +66,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         lowerThreshold = root.findViewById(R.id.lowerThreshold);
         upperThreshold = root.findViewById(R.id.upperThreshold);
 
-        minColors = new int[2];
-        minColors[0] = Color.HSVToColor(new float[] { 0f, 1f, 1f });
-        minColors[1] = BACKGROUND;
         lowerHSV = new float[3];
         upperHSV = new float[3];
-        maxColors = new int[2];
-        maxColors[0] = BACKGROUND;
-        maxColors[1] = Color.HSVToColor(new float[] { 358f, 1f, 1f });
-        lowerGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, minColors);
-        upperGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, maxColors);
         setLowerThreshold();
         setUpperThreshold();
 
@@ -355,9 +341,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         lowerHSV[0] = getActivityMain().lowerHue * 2;
         lowerHSV[1] = minSaturation;
         lowerHSV[2] = minValue;
-        minColors[1] = Color.HSVToColor(lowerHSV);
-        lowerGradient.setColors(minColors);
-        lowerThreshold.setBackground(lowerGradient);
+        lowerThreshold.setBackgroundColor(Color.HSVToColor(lowerHSV));
     }
 
     private void setUpperThreshold() {
@@ -366,9 +350,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         upperHSV[0] = getActivityMain().upperHue * 2;
         upperHSV[1] = minSaturation;
         upperHSV[2] = minValue;
-        maxColors[0] = Color.HSVToColor(upperHSV);
-        upperGradient.setColors(maxColors);
-        upperThreshold.setBackground(upperGradient);
+        upperThreshold.setBackgroundColor(Color.HSVToColor(upperHSV));
     }
 
     private void setupButtons() {

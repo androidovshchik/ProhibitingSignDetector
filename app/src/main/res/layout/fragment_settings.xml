@@ -26,10 +26,25 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_filter_36dp"/>
 
-        <View
-            android:id="@+id/lowerThreshold"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"/>
+            android:layout_height="96dp"
+            android:weightSum="2">
+
+            <View
+                android:id="@+id/minThreshold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FF0000"/>
+
+            <View
+                android:id="@+id/lowerThreshold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/lowerHue"
@@ -52,10 +67,25 @@
             app:activeColor="#202020"
             app:normalColor="#b5b5b5"/>
 
-        <View
-            android:id="@+id/upperThreshold"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"/>
+            android:layout_height="96dp"
+            android:weightSum="2">
+
+            <View
+                android:id="@+id/upperThreshold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <View
+                android:id="@+id/maxThreshold"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FF0004"/>
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/upperHue"
