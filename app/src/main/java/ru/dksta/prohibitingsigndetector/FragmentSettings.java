@@ -67,7 +67,11 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         upperThreshold = root.findViewById(R.id.upperThreshold);
 
         lowerHSV = new float[3];
+        lowerHSV[1] = 1f;
+        lowerHSV[2] = 1f;
         upperHSV = new float[3];
+        upperHSV[1] = 1f;
+        upperHSV[2] = 1f;
         setLowerThreshold();
         setUpperThreshold();
 
@@ -264,13 +268,16 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                 if (((boolean) save.getTag())) {
                     save.setTag(false);
                     save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
+                    prefs.putBoolean(Prefs.ROTATE_MAT, getActivityMain().rotateMat);
+                    prefs.putBoolean(Prefs.SHOW_INFO, getActivityMain().showInfo);
                     prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
                     prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
                     prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
                     prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
                     prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
-                    prefs.putBoolean(Prefs.ROTATE_MAT, getActivityMain().rotateMat);
-                    prefs.putBoolean(Prefs.SHOW_INFO, getActivityMain().showInfo);
+                    prefs.putInteger(Prefs.MIN_AREA, getActivityMain().minArea);
+                    prefs.putFloat(Prefs.MIN_CIRCULARITY, getActivityMain().minCircularity);
+                    prefs.putFloat(Prefs.MIN_INERTIA_RATIO, getActivityMain().minInertiaRatio);
                 }
                 break;
             default:
@@ -336,20 +343,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     }
 
     private void setLowerThreshold() {
-        float minSaturation = 1f * getActivityMain().minSaturation / 255;
-        float minValue = 1f * getActivityMain().minValue / 255;
         lowerHSV[0] = getActivityMain().lowerHue * 2;
-        lowerHSV[1] = minSaturation;
-        lowerHSV[2] = minValue;
         lowerThreshold.setBackgroundColor(Color.HSVToColor(lowerHSV));
     }
 
     private void setUpperThreshold() {
-        float minSaturation = 1f * getActivityMain().minSaturation / 255;
-        float minValue = 1f * getActivityMain().minValue / 255;
         upperHSV[0] = getActivityMain().upperHue * 2;
-        upperHSV[1] = minSaturation;
-        upperHSV[2] = minValue;
         upperThreshold.setBackgroundColor(Color.HSVToColor(upperHSV));
     }
 
@@ -365,14 +364,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private void restoreVars() {
         getActivityMain().rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT, false);
         getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
-        getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
-        getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
-        getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
-        getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
+        getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 4);
+        getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 165);
+        getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 80);
+        getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 32);
         getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
-        getActivityMain().minArea = prefs.getInteger(Prefs.MIN_AREA, 100);
-        getActivityMain().minCircularity = prefs.getFloat(Prefs.MIN_CIRCULARITY, 0.1f);
-        getActivityMain().minInertiaRatio = prefs.getFloat(Prefs.MIN_INERTIA_RATIO, 0.01f);
+        getActivityMain().minArea = prefs.getInteger(Prefs.MIN_AREA, 80);
+        getActivityMain().minCircularity = prefs.getFloat(Prefs.MIN_CIRCULARITY, 0.7f);
+        getActivityMain().minInertiaRatio = prefs.getFloat(Prefs.MIN_INERTIA_RATIO, 0.3f);
     }
 
     private void onChanges() {
