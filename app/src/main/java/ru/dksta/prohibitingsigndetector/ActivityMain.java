@@ -25,6 +25,12 @@ public class ActivityMain extends Activity {
     public int minValue;
     public int blur;
 
+    public int minArea;
+    public float minCircularity;
+    public float minConvexity;
+    public float minInertiaRatio;
+
+    private FragmentSettings settings;
     private FragmentCamera camera;
 
     private BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
@@ -45,6 +51,7 @@ public class ActivityMain extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
+        settings = (FragmentSettings) getFragmentManager().findFragmentById(R.id.settingFragment);
         camera = (FragmentCamera) getFragmentManager().findFragmentById(R.id.cameraFragment);
         ActivityCompat.requestPermissions(this, new String[] {
                 Manifest.permission.CAMERA
@@ -65,6 +72,7 @@ public class ActivityMain extends Activity {
     public void onPause() {
         super.onPause();
         camera.onPlayEvent(false);
+        settings.onPlayEvent(false);
     }
 
     public void onPlayEvent(boolean play) {
