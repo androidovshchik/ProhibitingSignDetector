@@ -142,6 +142,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
             }
         });
 
+        setTextValues();
+        setupWheels();
+
         View layers = root.findViewById(R.id.layers);
         layers.setTag(Constants.LAYER_RGBA);
         layers.setOnClickListener(this);
@@ -149,9 +152,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         save.setTag(false);
         save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
         save.setOnClickListener(this);
-
-        setTextValues();
-        setupWheels();
+        save.setOnLongClickListener(this);
 
         return root;
     }
@@ -218,13 +219,13 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         switch (view.getId()) {
             case R.id.save:
                 if (((boolean) save.getTag())) {
-                    save.setTag(false);
-                    save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
                     restoreVars();
                     setTextValues();
                     setLowerThreshold();
                     setUpperThreshold();
                     setupWheels();
+                    save.setTag(false);
+                    save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
                 }
                 break;
             default:
@@ -291,7 +292,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     }
 
     private void onChanges() {
-        if (!((boolean) save.getTag())) {
+        if (save != null && !((boolean) save.getTag())) {
             save.setTag(true);
             save.setColorFilter(DARK, PorterDuff.Mode.MULTIPLY);
         }
