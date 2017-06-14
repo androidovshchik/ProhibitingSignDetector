@@ -2,6 +2,7 @@ package ru.dksta.prohibitingsigndetector;
 
 import android.app.Fragment;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -15,9 +16,13 @@ import com.github.shchurov.horizontalwheelview.HorizontalWheelView;
 
 import ru.dksta.prohibitingsigndetector.utils.Prefs;
 
-public class FragmentSettings extends Fragment implements View.OnClickListener {
+public class FragmentSettings extends Fragment implements View.OnClickListener,
+        View.OnLongClickListener {
 
     private static final double PI2 = Math.PI * 2;
+    private static final int BACKGROUND = Color.parseColor("#f5f5f5");
+    private static final int LIGHT = Color.parseColor("#b5b5b5");
+    private static final int DARK = Color.parseColor("#202020");
 
     private Prefs prefs;
 
@@ -31,11 +36,19 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
     private GradientDrawable lowerGradient;
     private GradientDrawable upperGradient;
 
-    public TextView lowerHue;
-    public TextView upperHue;
-    public TextView minSaturation;
-    public TextView minValue;
-    public TextView blur;
+    private TextView lowerHue;
+    private TextView upperHue;
+    private TextView minSaturation;
+    private TextView minValue;
+    private TextView blur;
+
+    private HorizontalWheelView lowerHueWheel;
+    private HorizontalWheelView upperHueWheel;
+    private HorizontalWheelView minSaturationWheel;
+    private HorizontalWheelView minValueWheel;
+    private HorizontalWheelView blurWheel;
+
+    private ImageView save;
 
     public FragmentSettings() {}
 
@@ -45,22 +58,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
 
         prefs = new Prefs(getActivity().getApplicationContext());
-        getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
-        getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
-        getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
-        getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
-        getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
+        restoreVars();
 
         lowerThreshold = root.findViewById(R.id.lowerThreshold);
         upperThreshold = root.findViewById(R.id.upperThreshold);
 
         minColors = new int[2];
         minColors[0] = Color.HSVToColor(new float[] { 0f, 1f, 1f });
-        minColors[1] = Color.parseColor("#f5f5f5");
+        minColors[1] = BACKGROUND;
         lowerHSV = new float[3];
         upperHSV = new float[3];
         maxColors = new int[2];
-        maxColors[0] = Color.parseColor("#f5f5f5");
+        maxColors[0] = BACKGROUND;
         maxColors[1] = Color.HSVToColor(new float[] { 358f, 1f, 1f });
         lowerGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, minColors);
         upperGradient = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, maxColors);
@@ -68,9 +77,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         setUpperThreshold();
 
         lowerHue = (TextView) root.findViewById(R.id.lowerHue);
-        HorizontalWheelView lowerHueWheel = (HorizontalWheelView)
-                root.findViewById(R.id.lowerHueWheel);
-        lowerHueWheel.setRadiansAngle(getAngle(getActivityMain().lowerHue, 179));
+        lowerHueWheel = (HorizontalWheelView) root.findViewById(R.id.lowerHueWheel);
         lowerHueWheel.setEndLock(true);
         lowerHueWheel.setListener(new HorizontalWheelView.Listener() {
             @Override
@@ -78,13 +85,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 getActivityMain().lowerHue = (int) Math.round(radians / PI2 * 179);
                 setTextValues();
                 setLowerThreshold();
+                onChanges();
             }
         });
 
         upperHue = (TextView) root.findViewById(R.id.upperHue);
-        HorizontalWheelView upperHueWheel = (HorizontalWheelView)
-                root.findViewById(R.id.upperHueWheel);
-        upperHueWheel.setRadiansAngle(getAngle(getActivityMain().upperHue, 179));
+        upperHueWheel = (HorizontalWheelView) root.findViewById(R.id.upperHueWheel);
         upperHueWheel.setEndLock(true);
         upperHueWheel.setListener(new HorizontalWheelView.Listener() {
             @Override
@@ -92,13 +98,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 getActivityMain().upperHue = (int) Math.round(radians / PI2 * 179);
                 setTextValues();
                 setUpperThreshold();
+                onChanges();
             }
         });
 
         minSaturation = (TextView) root.findViewById(R.id.minSaturation);
-        HorizontalWheelView minSaturationWheel = (HorizontalWheelView)
-                root.findViewById(R.id.minSaturationWheel);
-        minSaturationWheel.setRadiansAngle(getAngle(getActivityMain().minSaturation, 255));
+        minSaturationWheel = (HorizontalWheelView) root.findViewById(R.id.minSaturationWheel);
         minSaturationWheel.setEndLock(true);
         minSaturationWheel.setListener(new HorizontalWheelView.Listener() {
             @Override
@@ -107,13 +112,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 setTextValues();
                 setLowerThreshold();
                 setUpperThreshold();
+                onChanges();
             }
         });
 
         minValue = (TextView) root.findViewById(R.id.minValue);
-        HorizontalWheelView minValueWheel = (HorizontalWheelView)
-                root.findViewById(R.id.minValueWheel);
-        minValueWheel.setRadiansAngle(getAngle(getActivityMain().minValue, 255));
+        minValueWheel = (HorizontalWheelView) root.findViewById(R.id.minValueWheel);
         minValueWheel.setEndLock(true);
         minValueWheel.setListener(new HorizontalWheelView.Listener() {
             @Override
@@ -122,28 +126,32 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 setTextValues();
                 setLowerThreshold();
                 setUpperThreshold();
+                onChanges();
             }
         });
 
         blur = (TextView) root.findViewById(R.id.blur);
-        HorizontalWheelView blurWheel = (HorizontalWheelView)
-                root.findViewById(R.id.blurWheel);
-        blurWheel.setRadiansAngle(getAngle((getActivityMain().blur - 3) / 2, 9));
+        blurWheel = (HorizontalWheelView) root.findViewById(R.id.blurWheel);
         blurWheel.setEndLock(true);
         blurWheel.setListener(new HorizontalWheelView.Listener() {
             @Override
             public void onRotationChanged(double radians) {
                 getActivityMain().blur = (int) Math.round(radians / PI2 * 9) * 2 + 3;
                 setTextValues();
+                onChanges();
             }
         });
 
-        setTextValues();
-
         View layers = root.findViewById(R.id.layers);
-        layers.setTag(Constants.LAYER_DEFAULT);
+        layers.setTag(Constants.LAYER_RGBA);
         layers.setOnClickListener(this);
-        root.findViewById(R.id.save).setOnClickListener(this);
+        save = (ImageView) root.findViewById(R.id.save);
+        save.setTag(false);
+        save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
+        save.setOnClickListener(this);
+
+        setTextValues();
+        setupWheels();
 
         return root;
     }
@@ -182,23 +190,47 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                         setLayerImage(view, R.drawable.ic_filter_8_36dp, Constants.LAYER_BLUR);
                         break;
                     case Constants.LAYER_BLUR:
-                        setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_DEFAULT);
+                        setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_RGBA);
                         break;
-                    case Constants.LAYER_DEFAULT:
+                    case Constants.LAYER_RGBA:
                         setLayerImage(view, R.drawable.ic_filter_1_36dp, Constants.LAYER_HSV);
                         break;
                 }
                 break;
             case R.id.save:
-                prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
-                prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
-                prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
-                prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
-                prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
+                if (((boolean) save.getTag())) {
+                    save.setTag(false);
+                    save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
+                    prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
+                    prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
+                    prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
+                    prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
+                    prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.save:
+                if (((boolean) save.getTag())) {
+                    save.setTag(false);
+                    save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
+                    restoreVars();
+                    setTextValues();
+                    setLowerThreshold();
+                    setUpperThreshold();
+                    setupWheels();
+                }
+                break;
+            default:
+                break;
+        }
+        return true;
     }
 
     private void setLayerImage(View view, @DrawableRes int id, int layerType) {
@@ -218,6 +250,14 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
                 getActivityMain().minValue));
         blur.setText(getString(R.string.text_blur,
                 getActivityMain().blur));
+    }
+
+    private void setupWheels() {
+        lowerHueWheel.setRadiansAngle(getAngle(getActivityMain().lowerHue, 179));
+        upperHueWheel.setRadiansAngle(getAngle(getActivityMain().upperHue, 179));
+        minSaturationWheel.setRadiansAngle(getAngle(getActivityMain().minSaturation, 255));
+        minValueWheel.setRadiansAngle(getAngle(getActivityMain().minValue, 255));
+        blurWheel.setRadiansAngle(getAngle((getActivityMain().blur - 3) / 2, 9));
     }
 
     private void setLowerThreshold() {
@@ -240,6 +280,21 @@ public class FragmentSettings extends Fragment implements View.OnClickListener {
         maxColors[0] = Color.HSVToColor(upperHSV);
         upperGradient.setColors(maxColors);
         upperThreshold.setBackground(upperGradient);
+    }
+
+    private void restoreVars() {
+        getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 12);
+        getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 168);
+        getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 50);
+        getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 100);
+        getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
+    }
+
+    private void onChanges() {
+        if (!((boolean) save.getTag())) {
+            save.setTag(true);
+            save.setColorFilter(DARK, PorterDuff.Mode.MULTIPLY);
+        }
     }
 
     private double getAngle(int value, int range) {
