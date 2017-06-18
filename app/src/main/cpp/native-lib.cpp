@@ -6,6 +6,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/features2d.hpp>
 
+typedef unsigned char uc;
+
 #define GREEN cv::Scalar(0, 255, 0)
 #define SIGN_THICKNESS 4
 #define FONT_SCALE 0.8
@@ -36,6 +38,57 @@ JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_saltPe
     cv::Mat white = noise > 225;
     (*mat).setTo(255, white);
     (*mat).setTo(0, black);
+}
+
+float verifyCircle(cv::Mat dt, cv::Point2f center, float radius, std::vector<cv::Point2f> & inlierSet) {
+    unsigned int counter = 0;
+    unsigned int inlier = 0;
+    float minInlierDist = 2.0f;
+    float maxInlierDistMax = 100.0f;
+    float maxInlierDist = radius / 25.0f;
+    if (maxInlierDist < minInlierDist) {
+        maxInlierDist = minInlierDist;
+    }
+    if (maxInlierDist > maxInlierDistMax) {
+        maxInlierDist = maxInlierDistMax;
+    }
+    for (float t = 0; t < std::atan(1.0) * 8; t += 0.05f) {
+        counter++;
+        int cX = (int) (radius * cos(t) + center.x);
+        int cY = (int) (radius * sin(t) + center.y);
+        if (cX < dt.cols && cX >= 0 && cY < dt.rows && cY >= 0 &&
+            dt.at<float>(cY, cX) < maxInlierDist) {
+            inlier++;
+            inlierSet.push_back(cv::Point2f(cX, cY));
+        }
+    }
+    return (float) inlier / float(counter);
+}
+
+inline void getCircle(cv::Point2f& p1,cv::Point2f& p2,cv::Point2f& p3, cv::Point2f& center, float& radius) {
+    float x1 = p1.x;
+    float x2 = p2.x;
+    float x3 = p3.x;
+    float y1 = p1.y;
+    float y2 = p2.y;
+    float y3 = p3.y;
+    center.x = (x1 * x1 + y1 * y1) * (y2 - y3) + (x2 * x2 + y2 * y2) * (y3 - y1) + (x3 * x3 + y3 * y3) * (y1 - y2);
+    center.x /= (2 * (x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2));
+    center.y = (x1 * x1 + y1 * y1) * (x3 - x2) + (x2 * x2 + y2 * y2) * (x1 - x3) + (x3 * x3 + y3 * y3) * (x2 - x1);
+    center.y /= (2 * (x1 * (y2 - y3) - y1 * (x2 - x3) + x2 * y3 - x3 * y2));
+    radius = (float) sqrt((center.x - x1) * (center.x - x1) + (center.y - y1) * (center.y - y1));
+}
+
+std::vector<cv::Point2f> getPointPositions(cv::Mat binaryImage) {
+    std::vector<cv::Point2f> pointPositions;
+    for(unsigned int y = 0; y < binaryImage.rows; ++y) {
+        for(unsigned int x = 0; x < binaryImage.cols; ++x) {
+            if(binaryImage.at<uc>(y, x) > 0){
+                pointPositions.push_back(cv::Point2f(x, y));
+            }
+        }
+    }
+    return pointPositions;
 }
 
 extern "C"
@@ -86,7 +139,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         *(cv::Mat*) matAddress = colorBlured;
     }
 
-    cv::SimpleBlobDetector::Params params;
+    /*cv::SimpleBlobDetector::Params params;
     params.filterByArea = true;
     params.minArea = minArea;
     params.filterByCircularity = true;
@@ -95,17 +148,68 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     params.minInertiaRatio = minInertiaRatio;
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keyPoints;
-    detector->detect(colorBlured, keyPoints);
+    detector->detect(colorBlured, keyPoints);*/
+
+    std::vector<cv::Point2f> edgePositions;
+    edgePositions = getPointPositions(colorBlured);
+
+// create distance transform to efficiently evaluate distance to nearest edge
+    cv::Mat dt;
+    cv::distanceTransform(255 - colorBlured, dt, CV_DIST_L1, 3);
+
+    for (int t = 0; t < 30; t++) {
+        //RANSAC: randomly choose 3 point and create a circle:
+        //TODO: choose randomly but more intelligent,
+        //so that it is more likely to choose three points of a circle.
+        //For example if there are many small circles, it is unlikely to randomly choose 3 points of the same circle.
+        unsigned int idx1 = rand()%edgePositions.size();
+        unsigned int idx2 = rand()%edgePositions.size();
+        unsigned int idx3 = rand()%edgePositions.size();
+
+        // we need 3 different samples:
+        if(idx1 == idx2) continue;
+        if(idx1 == idx3) continue;
+        if(idx3 == idx2) continue;
+
+        // create circle from 3 points:
+        cv::Point2f center; float radius;
+        getCircle(edgePositions[idx1],edgePositions[idx2],edgePositions[idx3],center,radius);
+
+        float minCirclePercentage = 0.4f;
+
+        // inlier set unused at the moment but could be used to approximate a (more robust) circle from alle inlier
+        std::vector<cv::Point2f> inlierSet;
+
+        //verify or falsify the circle by inlier counting:
+        float cPerc = verifyCircle(dt,center,radius, inlierSet);
+
+        if(cPerc >= minCirclePercentage) {
+            cv::circle((*(cv::Mat*) matAddress), center,radius, cv::Scalar(255,255,0),1);
+
+            // accept circle => remove it from the edge list
+            cv::circle(colorBlured, center,radius,cv::Scalar(0),10);
+
+            //update edge positions and distance transform
+            edgePositions = getPointPositions(colorBlured);
+            cv::distanceTransform(255 - colorBlured, dt,CV_DIST_L1, 3);
+        }
+
+        // prevent cases where no fircle could be extracted (because three points collinear or sth.)
+        // filter NaN values
+        if((center.x == center.x)&&(center.y == center.y)&&(radius == radius)) {
+            cv::circle(colorBlured, center, radius, cv::Scalar(255));
+        }
+    }
 
     if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
         cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
     }
 
-    jsize length = (jsize) keyPoints.size() * 3;
+    jsize length = 0;//(jsize) keyPoints.size() * 3;
     if (length == 0) {
         return NULL;
     }
-    jint buffer[length];
+    /*jint buffer[length];
     for (int index = 0; index < length; index += 3) {
         buffer[index] = (int) keyPoints[index / 3].pt.x;
         buffer[index + 1] = (int) keyPoints[index / 3].pt.y;
@@ -116,7 +220,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         return NULL;
     }
     env->SetIntArrayRegion(result, 0, length, buffer);
-    return result;
+    return result;*/
 }
 
 extern "C"
