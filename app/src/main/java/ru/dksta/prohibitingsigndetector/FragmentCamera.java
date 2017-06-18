@@ -55,6 +55,13 @@ public class FragmentCamera extends Fragment implements CameraBridgeViewBase.CvC
         if (getActivityMain().rotateMat) {
             getActivityMain().rotation(matAddress, 180);
         }
+        switch (getActivityMain().noiseType) {
+            case Constants.NOISE_SALT_PEPPER:
+                getActivityMain().saltPepperNoise(matAddress);
+                break;
+            default:
+                break;
+        }
         int[] circlesArray = getActivityMain().search(matAddress, getActivityMain().layerType,
                 getActivityMain().lowerHue, getActivityMain().upperHue,
                 getActivityMain().minSaturation, getActivityMain().minValue,

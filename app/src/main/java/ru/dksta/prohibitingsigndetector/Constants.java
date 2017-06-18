@@ -12,4 +12,7 @@ public interface Constants {
     int LAYER_VALUE = 7;
     int LAYER_RED_FILTERED = 8;
     int LAYER_BLUR = 9;
+
+    int NOISE_NONE = 1;
+    int NOISE_SALT_PEPPER = 2;
 }

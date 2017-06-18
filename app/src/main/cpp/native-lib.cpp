@@ -27,11 +27,26 @@
 
 extern "C"
 
+JNIEXPORT void JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_saltPepperNoise(JNIEnv /* *env */,
+    jclass /* activity */, jlong matAddress) {
+    cv::Mat* mat = (cv::Mat*) matAddress;
+    cv::Mat noise = cv::Mat::zeros((*mat).rows, (*mat).cols, CV_8U);
+    cv::randu(noise, 0, 255);
+    cv::Mat black = noise < 30;
+    cv::Mat white = noise > 225;
+    (*mat).setTo(255, white);
+    (*mat).setTo(0, black);
+}
+
+extern "C"
+
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
     jclass /* activity */, jlong matAddress, jint layerType, jint lowerHue, jint upperHue,
     jint minSaturation, jint minValue, jint blur, jint minArea, jfloat minCircularity,
     jfloat minInertiaRatio) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
+
+    cv::medianBlur(original, original, 3);
 
     cv::Mat hsv;
     cv::cvtColor(original, hsv, cv::COLOR_RGB2HSV);
@@ -65,9 +80,10 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         *(cv::Mat*) matAddress = colorFiltered;
     }
 
-    cv::medianBlur(colorFiltered, colorFiltered, blur);
+    cv::Mat colorBlured;
+    cv::GaussianBlur(colorFiltered, colorBlured, cv::Size(blur, blur), 0);
     if (layerType == LAYER_BLUR) {
-        *(cv::Mat*) matAddress = colorFiltered;
+        *(cv::Mat*) matAddress = colorBlured;
     }
 
     cv::SimpleBlobDetector::Params params;
@@ -79,7 +95,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     params.minInertiaRatio = minInertiaRatio;
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keyPoints;
-    detector->detect(colorFiltered, keyPoints);
+    detector->detect(colorBlured, keyPoints);
 
     if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
         cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);

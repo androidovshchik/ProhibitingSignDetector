@@ -190,6 +190,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         View layers = root.findViewById(R.id.layers);
         layers.setTag(Constants.LAYER_RGBA);
         layers.setOnClickListener(this);
+        View noise = root.findViewById(R.id.noise);
+        noise.setTag(Constants.NOISE_NONE);
+        noise.setOnClickListener(this);
         rotate = (ImageView) root.findViewById(R.id.rotate);
         rotate.setOnClickListener(this);
         showInfo = (ImageView) root.findViewById(R.id.showInfo);
@@ -254,6 +257,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                         break;
                 }
                 break;
+            case R.id.noise:
+                switch ((int) view.getTag()) {
+                    case Constants.NOISE_SALT_PEPPER:
+                        setNoiseImage(view, R.drawable.ic_photo_36dp, Constants.NOISE_NONE);
+                        break;
+                    case Constants.NOISE_NONE:
+                        setNoiseImage(view, R.drawable.ic_looks_one_36dp, Constants.NOISE_SALT_PEPPER);
+                        break;
+                    default:
+                        break;
+                }
+                break;
             case R.id.rotate:
                 onChanges();
                 getActivityMain().rotateMat = !getActivityMain().rotateMat;
@@ -309,6 +324,12 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private void setLayerImage(View view, @DrawableRes int id, int layerType) {
         getActivityMain().layerType = layerType;
         view.setTag(layerType);
+        ((ImageView) view).setImageResource(id);
+    }
+
+    private void setNoiseImage(View view, @DrawableRes int id, int noiseType) {
+        getActivityMain().noiseType = noiseType;
+        view.setTag(noiseType);
         ((ImageView) view).setImageResource(id);
     }
 

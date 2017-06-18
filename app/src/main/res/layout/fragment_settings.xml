@@ -26,13 +26,20 @@
             android:scaleType="centerInside"
             android:src="@drawable/ic_filter_36dp"/>
 
+        <ImageView
+            android:id="@+id/noise"
+            android:layout_width="match_parent"
+            android:layout_height="96dp"
+            android:contentDescription="@string/app_name"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_photo_36dp"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="96dp"
             android:weightSum="2">
 
             <View
-                android:id="@+id/minThreshold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -79,7 +86,6 @@
                 android:layout_weight="1"/>
 
             <View
-                android:id="@+id/maxThreshold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
