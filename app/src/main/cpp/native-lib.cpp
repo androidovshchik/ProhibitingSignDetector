@@ -44,6 +44,10 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     jclass /* activity */, jlong matAddress, jint layerType, jint lowerHue, jint upperHue,
     jint minSaturation, jint minValue, jboolean secondView) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
+    if (layerType == LAYER_RGBA) {
+        cv::cvtColor(original, original, cv::COLOR_RGBA2RGB);
+        *(cv::Mat*) matAddress = original;
+    }
 
     cv::medianBlur(original, original, 3);
 
@@ -88,13 +92,12 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     cv::SimpleBlobDetector::Params params;
     params.filterByColor = false;
     params.filterByConvexity = false;
+    params.filterByInertia = false;
     params.filterByArea = true;
     params.minArea = 255;// A = 254.46900494077 px^2 при D = 9 px
     params.maxArea = 723823; // A = 723822.94738709 px^2 при D = 480 px
     params.filterByCircularity = true;
-    params.minCircularity = 0.87f;
-    params.filterByInertia = true;
-    params.minInertiaRatio = 0.1f;
+    params.minCircularity = 0.85f;
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keyPoints;
     detector->detect(colorDilated, keyPoints);
@@ -104,7 +107,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     }
 
     if (secondView) {
-        cv::Mat miniView = colorFiltered.clone();
+        cv::Mat miniView = colorDilated.clone();
         cv::cvtColor(miniView, miniView, cv::COLOR_GRAY2RGB);
         cv::resize(miniView, miniView, cv::Size(), 0.6, 0.6, cv::INTER_LINEAR);
         cv::Size miniSize = miniView.size();
@@ -170,7 +173,7 @@ std::string getLayerTypeDesc(jint layerType) {
         case LAYER_RED_FILTERED:
             return "LAYER RED FILTERED";
         case LAYER_DILATED:
-            return "LAYER BLURED";
+            return "LAYER DILATED";
         default:
             return "LAYER RGBA";
     }
