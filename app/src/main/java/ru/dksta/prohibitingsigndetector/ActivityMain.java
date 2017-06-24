@@ -6,6 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.WindowManager;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+
 import ru.dksta.prohibitingsigndetector.utils.PermissionsUtil;
 
 public class ActivityMain extends Activity {
@@ -34,9 +38,7 @@ public class ActivityMain extends Activity {
     private FragmentSettings settings;
     private FragmentCamera camera;
 
-    static {
-        System.loadLibrary("native-lib");
-    }
+    private BaseLoaderCallback baseLoaderCallback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,10 +47,34 @@ public class ActivityMain extends Activity {
         setContentView(R.layout.activity_main);
         settings = (FragmentSettings) getFragmentManager().findFragmentById(R.id.settingFragment);
         camera = (FragmentCamera) getFragmentManager().findFragmentById(R.id.cameraFragment);
+        baseLoaderCallback = new BaseLoaderCallback(getApplicationContext()) {
+            @Override
+            public void onManagerConnected(int status) {
+                super.onManagerConnected(status);
+                switch (status) {
+                    case LoaderCallbackInterface.SUCCESS:
+                        System.loadLibrary("native-lib");
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
         allowWork = PermissionsUtil.hasAllPermissions(getApplicationContext());
         if (!allowWork) {
             ActivityCompat.requestPermissions(this, PermissionsUtil.ALL_PERMISSIONS,
                     REQUEST_CODE_CAMERA);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!OpenCVLoader.initDebug()) {
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_2_0, getApplicationContext(),
+                    baseLoaderCallback);
+        } else {
+            baseLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
     }
 
@@ -83,7 +109,7 @@ public class ActivityMain extends Activity {
 
     public native int[] search(long matAddress, int layerType, int lowerHue, int upperHue,
                                int minSaturation, int minValue, int blur, int minArea,
-                               float minCircularity, float minInertiaRatio);
+                               float minCircularity, float minInertiaRatio, boolean secondView);
 
     public native void selection(long matAddress, int[] circlesArray);
 
