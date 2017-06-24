@@ -11,7 +11,7 @@ public interface Constants {
     int LAYER_SATURATION = 6;
     int LAYER_VALUE = 7;
     int LAYER_RED_FILTERED = 8;
-    int LAYER_BLUR = 9;
+    int LAYER_DILATED = 9;
 
     int NOISE_NONE = 1;
     int NOISE_SALT_PEPPER = 2;

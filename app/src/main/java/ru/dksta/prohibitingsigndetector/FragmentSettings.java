@@ -34,19 +34,11 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private TextView upperHue;
     private TextView minSaturation;
     private TextView minValue;
-    private TextView blur;
-    private TextView minArea;
-    private TextView minCircularity;
-    private TextView minInertiaRatio;
 
     private HorizontalWheelView lowerHueWheel;
     private HorizontalWheelView upperHueWheel;
     private HorizontalWheelView minSaturationWheel;
     private HorizontalWheelView minValueWheel;
-    private HorizontalWheelView blurWheel;
-    private HorizontalWheelView minAreaWheel;
-    private HorizontalWheelView minCircularityWheel;
-    private HorizontalWheelView minInertiaRatioWheel;
 
     private ImageView play;
     private ImageView rotate;
@@ -130,58 +122,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
             }
         });
 
-        blur = (TextView) root.findViewById(R.id.blur);
-        blurWheel = (HorizontalWheelView) root.findViewById(R.id.blurWheel);
-        blurWheel.setEndLock(true);
-        blurWheel.setListener(new HorizontalWheelView.Listener() {
-            @Override
-            public void onRotationChanged(double radians) {
-                getActivityMain().blur = (int) Math.round(radians / PI2 * 9) * 2 + 3;
-                setTextValues();
-                onChanges();
-            }
-        });
-
-        minArea = (TextView) root.findViewById(R.id.minArea);
-        minAreaWheel = (HorizontalWheelView) root.findViewById(R.id.minAreaWheel);
-        minAreaWheel.setEndLock(true);
-        minAreaWheel.setListener(new HorizontalWheelView.Listener() {
-            @Override
-            public void onRotationChanged(double radians) {
-                getActivityMain().minArea = (int) Math.round(radians / PI2 * 480);
-                setTextValues();
-                onChanges();
-            }
-        });
-
-        minCircularity = (TextView) root.findViewById(R.id.minCircularity);
-        minCircularityWheel = (HorizontalWheelView) root.findViewById(R.id.minCircularityWheel);
-        minCircularityWheel.setEndLock(true);
-        minCircularityWheel.setListener(new HorizontalWheelView.Listener() {
-            @Override
-            public void onRotationChanged(double radians) {
-                radians = radians / PI2 * 100;
-                radians = Math.round(radians);
-                getActivityMain().minCircularity = (float) radians / 100;
-                setTextValues();
-                onChanges();
-            }
-        });
-
-        minInertiaRatio = (TextView) root.findViewById(R.id.minInertiaRatio);
-        minInertiaRatioWheel = (HorizontalWheelView) root.findViewById(R.id.minInertiaRatioWheel);
-        minInertiaRatioWheel.setEndLock(true);
-        minInertiaRatioWheel.setListener(new HorizontalWheelView.Listener() {
-            @Override
-            public void onRotationChanged(double radians) {
-                radians = radians / PI2 * 100;
-                radians = Math.round(radians);
-                getActivityMain().minInertiaRatio = (float) radians / 100;
-                setTextValues();
-                onChanges();
-            }
-        });
-
         setTextValues();
         setupWheels();
 
@@ -248,9 +188,9 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                         setLayerImage(view, R.drawable.ic_filter_7_36dp, Constants.LAYER_RED_FILTERED);
                         break;
                     case Constants.LAYER_RED_FILTERED:
-                        setLayerImage(view, R.drawable.ic_filter_8_36dp, Constants.LAYER_BLUR);
+                        setLayerImage(view, R.drawable.ic_filter_8_36dp, Constants.LAYER_DILATED);
                         break;
-                    case Constants.LAYER_BLUR:
+                    case Constants.LAYER_DILATED:
                         setLayerImage(view, R.drawable.ic_filter_36dp, Constants.LAYER_RGBA);
                         break;
                     case Constants.LAYER_RGBA:
@@ -298,10 +238,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                     prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
                     prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
                     prefs.putInteger(Prefs.MIN_VALUE, getActivityMain().minValue);
-                    prefs.putInteger(Prefs.BLUR, getActivityMain().blur);
-                    prefs.putInteger(Prefs.MIN_AREA, getActivityMain().minArea);
-                    prefs.putFloat(Prefs.MIN_CIRCULARITY, getActivityMain().minCircularity);
-                    prefs.putFloat(Prefs.MIN_INERTIA_RATIO, getActivityMain().minInertiaRatio);
                 }
                 break;
             default:
@@ -351,14 +287,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                 getActivityMain().minSaturation));
         minValue.setText(getString(R.string.text_min_value,
                 getActivityMain().minValue));
-        blur.setText(getString(R.string.text_blur,
-                getActivityMain().blur));
-        minArea.setText(getString(R.string.text_min_area,
-                getActivityMain().minArea));
-        minCircularity.setText(getString(R.string.text_min_circularity,
-                getActivityMain().minCircularity));
-        minInertiaRatio.setText(getString(R.string.text_min_inertia_ratio,
-                getActivityMain().minInertiaRatio));
     }
 
     private void setupWheels() {
@@ -366,10 +294,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         upperHueWheel.setRadiansAngle(getAngle(getActivityMain().upperHue, 179));
         minSaturationWheel.setRadiansAngle(getAngle(getActivityMain().minSaturation, 255));
         minValueWheel.setRadiansAngle(getAngle(getActivityMain().minValue, 255));
-        blurWheel.setRadiansAngle(getAngle((getActivityMain().blur - 3) / 2, 9));
-        minAreaWheel.setRadiansAngle(getAngle(getActivityMain().minArea, 480));
-        minCircularityWheel.setRadiansAngle(getActivityMain().minCircularity * PI2);
-        minInertiaRatioWheel.setRadiansAngle(getActivityMain().minInertiaRatio * PI2);
     }
 
     private void setLowerThreshold() {
@@ -402,10 +326,6 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 165);
         getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 80);
         getActivityMain().minValue = prefs.getInteger(Prefs.MIN_VALUE, 32);
-        getActivityMain().blur = prefs.getInteger(Prefs.BLUR, 3);
-        getActivityMain().minArea = prefs.getInteger(Prefs.MIN_AREA, 80);
-        getActivityMain().minCircularity = prefs.getFloat(Prefs.MIN_CIRCULARITY, 0.7f);
-        getActivityMain().minInertiaRatio = prefs.getFloat(Prefs.MIN_INERTIA_RATIO, 0.3f);
     }
 
     private void onChanges() {

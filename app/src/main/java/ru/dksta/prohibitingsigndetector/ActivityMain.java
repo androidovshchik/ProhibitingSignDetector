@@ -29,11 +29,6 @@ public class ActivityMain extends Activity {
     public int upperHue;
     public int minSaturation;
     public int minValue;
-    public int blur;
-
-    public int minArea;
-    public float minCircularity;
-    public float minInertiaRatio;
 
     private FragmentSettings settings;
     private FragmentCamera camera;
@@ -108,8 +103,7 @@ public class ActivityMain extends Activity {
     public native void saltPepperNoise(long matAddress);
 
     public native int[] search(long matAddress, int layerType, int lowerHue, int upperHue,
-                               int minSaturation, int minValue, int blur, int minArea,
-                               float minCircularity, float minInertiaRatio, boolean secondView);
+                               int minSaturation, int minValue, boolean secondView);
 
     public native void selection(long matAddress, int[] circlesArray);
 

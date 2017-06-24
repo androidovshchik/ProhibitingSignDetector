@@ -23,7 +23,7 @@ public final class Prefs {
     public static final String UPPER_HUE = "upperHue";
     public static final String MIN_SATURATION = "minSaturation";
     public static final String MIN_VALUE = "minValue";
-    public static final String BLUR = "blur";
+    public static final String DILATE = "dilate";
     public static final String MIN_AREA = "minArea";
     public static final String MIN_CIRCULARITY = "minCircularity";
     public static final String MIN_INERTIA_RATIO = "minInertiaRatio";

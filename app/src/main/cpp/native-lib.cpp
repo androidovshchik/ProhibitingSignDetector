@@ -23,7 +23,7 @@
 #define LAYER_SATURATION 6
 #define LAYER_VALUE 7
 #define LAYER_RED_FILTERED 8
-#define LAYER_BLUR 9
+#define LAYER_DILATED 9
 
 extern "C"
 
@@ -42,8 +42,7 @@ extern "C"
 
 JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_search(JNIEnv *env,
     jclass /* activity */, jlong matAddress, jint layerType, jint lowerHue, jint upperHue,
-    jint minSaturation, jint minValue, jint blur, jint minArea, jfloat minCircularity,
-    jfloat minInertiaRatio, jboolean secondView) {
+    jint minSaturation, jint minValue, jboolean secondView) {
     cv::Mat original = (*(cv::Mat*) matAddress).clone();
 
     cv::medianBlur(original, original, 3);
@@ -80,10 +79,10 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
         *(cv::Mat*) matAddress = colorFiltered;
     }
 
-    cv::Mat colorBlured;
-    cv::dilate(colorFiltered, colorBlured, cv::Mat(), cv::Point(-1,-1));
-    if (layerType == LAYER_BLUR) {
-        *(cv::Mat*) matAddress = colorBlured;
+    cv::Mat colorDilated;
+    cv::dilate(colorFiltered, colorDilated, cv::Mat());
+    if (layerType == LAYER_DILATED) {
+        *(cv::Mat*) matAddress = colorDilated;
     }
 
     cv::SimpleBlobDetector::Params params;
@@ -98,7 +97,7 @@ JNIEXPORT jintArray JNICALL Java_ru_dksta_prohibitingsigndetector_ActivityMain_s
     params.minInertiaRatio = 0.1f;
     cv::Ptr<cv::SimpleBlobDetector> detector = cv::SimpleBlobDetector::create(params);
     std::vector<cv::KeyPoint> keyPoints;
-    detector->detect(colorBlured, keyPoints);
+    detector->detect(colorDilated, keyPoints);
 
     if (layerType != LAYER_RGBA && layerType != LAYER_HSV) {
         cv::cvtColor(*(cv::Mat*) matAddress, *(cv::Mat*) matAddress, cv::COLOR_GRAY2RGB);
@@ -170,7 +169,7 @@ std::string getLayerTypeDesc(jint layerType) {
             return "LAYER VALUE";
         case LAYER_RED_FILTERED:
             return "LAYER RED FILTERED";
-        case LAYER_BLUR:
+        case LAYER_DILATED:
             return "LAYER BLURED";
         default:
             return "LAYER RGBA";
