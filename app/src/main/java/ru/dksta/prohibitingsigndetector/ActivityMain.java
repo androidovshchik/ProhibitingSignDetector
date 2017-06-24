@@ -19,6 +19,7 @@ public class ActivityMain extends Activity {
 
     public boolean rotateMat;
     public boolean showInfo;
+    public boolean showSecondView;
 
     public int lowerHue;
     public int upperHue;

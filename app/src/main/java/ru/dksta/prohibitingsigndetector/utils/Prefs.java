@@ -17,6 +17,7 @@ public final class Prefs {
     public static final String APP_RESTRICTIONS = "App Restrictions";
 
     public static final String SHOW_INFO = "showInfo";
+    public static final String SHOW_SECOND_VIEW = "showSecondView";
     public static final String ROTATE_MAT = "rotateMat";
     public static final String LOWER_HUE = "lowerHue";
     public static final String UPPER_HUE = "upperHue";

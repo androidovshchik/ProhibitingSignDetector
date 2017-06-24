@@ -51,6 +51,7 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
     private ImageView play;
     private ImageView rotate;
     private ImageView showInfo;
+    private ImageView showSecondView;
     private ImageView save;
 
     public FragmentSettings() {}
@@ -197,6 +198,8 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         rotate.setOnClickListener(this);
         showInfo = (ImageView) root.findViewById(R.id.showInfo);
         showInfo.setOnClickListener(this);
+        showSecondView = (ImageView) root.findViewById(R.id.secondView);
+        showSecondView.setOnClickListener(this);
         save = (ImageView) root.findViewById(R.id.save);
         save.setTag(false);
         save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
@@ -279,12 +282,18 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
                 getActivityMain().showInfo = !getActivityMain().showInfo;
                 setupButtons();
                 break;
+            case R.id.secondView:
+                onChanges();
+                getActivityMain().showSecondView = !getActivityMain().showSecondView;
+                setupButtons();
+                break;
             case R.id.save:
                 if (((boolean) save.getTag())) {
                     save.setTag(false);
                     save.setColorFilter(LIGHT, PorterDuff.Mode.MULTIPLY);
                     prefs.putBoolean(Prefs.ROTATE_MAT, getActivityMain().rotateMat);
                     prefs.putBoolean(Prefs.SHOW_INFO, getActivityMain().showInfo);
+                    prefs.putBoolean(Prefs.SHOW_SECOND_VIEW, getActivityMain().showSecondView);
                     prefs.putInteger(Prefs.LOWER_HUE, getActivityMain().lowerHue);
                     prefs.putInteger(Prefs.UPPER_HUE, getActivityMain().upperHue);
                     prefs.putInteger(Prefs.MIN_SATURATION, getActivityMain().minSaturation);
@@ -380,11 +389,15 @@ public class FragmentSettings extends Fragment implements View.OnClickListener,
         showInfo.setTag(getActivityMain().showInfo);
         showInfo.setColorFilter(getActivityMain().showInfo ? DARK : LIGHT,
                 PorterDuff.Mode.MULTIPLY);
+        showSecondView.setTag(getActivityMain().showSecondView);
+        showSecondView.setColorFilter(getActivityMain().showSecondView ? DARK : LIGHT,
+                PorterDuff.Mode.MULTIPLY);
     }
 
     private void restoreVars() {
         getActivityMain().rotateMat = prefs.getBoolean(Prefs.ROTATE_MAT, false);
         getActivityMain().showInfo = prefs.getBoolean(Prefs.SHOW_INFO, true);
+        getActivityMain().showSecondView = prefs.getBoolean(Prefs.SHOW_SECOND_VIEW, true);
         getActivityMain().lowerHue = prefs.getInteger(Prefs.LOWER_HUE, 4);
         getActivityMain().upperHue = prefs.getInteger(Prefs.UPPER_HUE, 165);
         getActivityMain().minSaturation = prefs.getInteger(Prefs.MIN_SATURATION, 80);
