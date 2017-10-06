@@ -1,6 +1,5 @@
 # ProhibitingSignDetector
 
-![](https://raw.githubusercontent.com/botnetify/ProhibitingSignDetector/master/IHDmF54rghk.jpg)
+Diplom project. Free to use
 
-A video how it works:
-https://vk.com/video220436550_456239023
+<img src="https://github.com/androidovshchik/ProhibitingSignDetector/blob/master/art/screenshot.png?raw=true" height="400">
