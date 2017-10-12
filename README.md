@@ -1,5 +1,11 @@
 # ProhibitingSignDetector
 
-Diplom project. Free to use
+Simple detector for phohibiting traffic signs
 
-<img src="https://github.com/androidovshchik/ProhibitingSignDetector/blob/master/art/screenshot.png?raw=true" height="400">
+## Screenshots
+
+<img src="art/screenshot.png" height="400">
+
+## License
+
+<img src="art/gplv3-127x51.png">
