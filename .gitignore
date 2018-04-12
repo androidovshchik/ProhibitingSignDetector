@@ -3,6 +3,7 @@
 .idea
 build
 captures
+app/src/main/jniLibs
 openCVLibrary320/build
 local.properties
 .DS_Store
