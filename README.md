@@ -8,6 +8,8 @@
 
 Simple detector for phohibiting traffic signs in Android
 
+Article https://habrahabr.ru/post/339506/
+
 ## Binaries
 
 [Download apks for arm64-v8a, armeabi, armeabi-v7a, mips or x86](https://github.com/androidovshchik/ProhibitingSignDetector/releases)
